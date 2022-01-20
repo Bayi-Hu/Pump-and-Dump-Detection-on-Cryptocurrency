@@ -1,0 +1,8 @@
+/Telegram/Data/*
+/Telegram/anon.session
+/PumpOlymp/HistoryPumpDump.json
+/PumpOlymp/PumpHistoryAnalyze.ipynb
+#/.gitignore
+/PumpOlymp/.ipynb_checkpoints/*
+/.DS_Store
+/.idea/*
