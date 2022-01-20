@@ -1,1 +1,1 @@
-# Fake-News-Detection-on-Cryptocurrency
+# Pump-and-Dump-Detection-on-Cryptocurrency
