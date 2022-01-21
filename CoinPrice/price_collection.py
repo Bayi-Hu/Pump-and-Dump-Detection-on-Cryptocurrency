@@ -49,7 +49,7 @@ if __name__ == "__main__":
             tables = query_api.query(q_str)
 
             if len(tables)>0:
-                print(pump_symbol_list[i] +" in the database")
+                print(pump_symbol_list[i] +"has" + str(len(tables))+ "times trade")
 
             else:
                 print(pump_symbol_list[i] +" not found..")
