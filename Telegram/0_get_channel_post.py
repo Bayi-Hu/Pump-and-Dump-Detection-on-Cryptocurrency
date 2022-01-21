@@ -36,7 +36,8 @@ async def main():
         limit = 100
         all_messages = []
         total_messages = 0
-        total_count_limit = 0
+        # total_count_limit = 0
+        total_count_limit = 500000
 
         entity = channel[13:-1]
 

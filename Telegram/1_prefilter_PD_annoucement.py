@@ -33,6 +33,10 @@ def load_obj(file):
     with open("./Data/" + file, "rb") as f:
         return pickle.load(f)
 
+def save_obj(obj, name):
+    with open("./PreSelection/" + name + ".pkl", "wb") as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
 crypto_match = []
 exchange_match = []
 keyword_match = []
@@ -68,15 +72,22 @@ if __name__ == '__main__':
     exchange_symbol_list = exchange_symbol.split(",")
     keyword_list = ["target", "buy", "pump"]
 
-    all_messgaes = load_obj("1214538537.pkl")
-    message_list = []
+    for root, dirs, files in os.walk("./Data"):
 
-    for m in all_messgaes:
-        if m["post"] != True or m["_"] != "Message":
-            continue
-        
-        if pre_select(m):
-            message_list.append(m)
+        for file in files:
+            message_list = []
+            if file.endswith(".pkl"):
+                all_messgaes = load_obj(file)
+
+                for m in all_messgaes:
+                    if m["from_id"] != None or m["_"] != "Message":
+                        continue
+
+                    if pre_select(m):
+                        message_list.append(m)
+
+            if(len(message_list)>0):
+                save_obj(message_list, file[:-4])
             
     print("pause")
 
