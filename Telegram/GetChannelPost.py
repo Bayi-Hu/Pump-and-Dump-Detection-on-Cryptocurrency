@@ -3,7 +3,6 @@ import json
 import os.path
 import pickle
 
-
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
 
