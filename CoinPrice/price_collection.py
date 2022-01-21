@@ -36,7 +36,7 @@ if __name__ == "__main__":
         volumes = []
 
         try:
-            start = pump_time - 1
+            start = pump_time - interval - 1
             stop = pump_time + interval - 1
 
             q_str = '''from (bucket: "{}") |> range(start: {}, stop: {})'''.format(
@@ -49,10 +49,10 @@ if __name__ == "__main__":
             tables = query_api.query(q_str)
 
             if len(tables)>0:
-                print(pump_symbol_list[i] +"in the database")
+                print(pump_symbol_list[i] +" in the database")
 
             else:
-                print(pump_symbol_list[i] +"not found..")
+                print(pump_symbol_list[i] +" not found..")
 
         except Exception as e:
             print(e)
