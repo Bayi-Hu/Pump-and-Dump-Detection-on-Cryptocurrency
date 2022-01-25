@@ -2,8 +2,6 @@ import configparser
 import json
 import os
 import pickle
-
-
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
 
@@ -42,8 +40,8 @@ async def main():
 
         id2channel[my_channel.id] = entity
         channel2id[entity] = my_channel.id
-    
-    
+
+
 with client:
     client.loop.run_until_complete(main())
     client.disconnect()

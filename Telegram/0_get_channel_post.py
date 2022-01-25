@@ -24,7 +24,7 @@ def save_obj(obj, name):
 
 async def main():
 
-    with open("./Data/PUMPOLYMP_public_channel", "r") as f:
+    with open("./Data/PUMPOLYMP_public_channel2", "r") as f:
         Channels = f.readlines()
 
     failed_channel = []
@@ -33,7 +33,7 @@ async def main():
     for channel in Channels:
 
         offset_id = 0
-        limit = 100
+        limit = 500
         all_messages = []
         total_messages = 0
         # total_count_limit = 0

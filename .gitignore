@@ -5,5 +5,6 @@
 /PumpOlymp/PumpHistoryAnalyze.ipynb
 #/.gitignore
 /PumpOlymp/.ipynb_checkpoints/*
+/Telegram/Labeled/*
 /.DS_Store
 /.idea/*

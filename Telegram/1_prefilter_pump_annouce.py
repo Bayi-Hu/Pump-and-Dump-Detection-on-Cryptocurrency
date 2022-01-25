@@ -5,29 +5,7 @@ import pickle
 from datetime import datetime, timedelta
 import re
 import os
-from urlextract import URLExtract
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 
-punctuations = '''’'!()-[]{};:'"\,<>./?@#$%^&*_~�'''
-
-def remove_punctuation_url(d):
-    d=d.lower()
-    d = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', d, flags=re.MULTILINE) #This line is for removing url
-    review = d.replace('\n', '')
-    no_punct = ""
-    for char in review:
-        if char not in punctuations:
-            no_punct = no_punct + char
-    return no_punct
-
-def remove_stopwords(d):
-    text_tokens = word_tokenize(d.lower())
-    tokens_without_sw = [word for word in text_tokens if not word in stopwords.words('english')]
-    ls = ""
-    for w in tokens_without_sw:
-        ls = ls +" "+w.lower()
-    return ls
 
 def load_obj(file):
     with open("./Data/" + file, "rb") as f:
