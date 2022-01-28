@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import re
 import os
 
-
 def load_obj(file):
     with open("./Data/" + file, "rb") as f:
         return pickle.load(f)

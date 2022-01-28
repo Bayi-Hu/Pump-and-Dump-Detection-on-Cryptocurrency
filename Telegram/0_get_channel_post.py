@@ -17,7 +17,6 @@ api_hash = 'aa62488becc0e9765efaea67811f5de5'
 
 client = TelegramClient('anon', api_id, api_hash, proxy=("socks5", '127.0.0.1', 7890))
 
-
 def save_obj(obj, name):
     with open("./Data/" + name + ".pkl", "wb") as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -38,11 +37,14 @@ async def main():
         total_messages = 0
         # total_count_limit = 0
         total_count_limit = 500000
-
         entity = channel[13:-1]
 
         try:
             my_channel = await client.get_entity(entity)
+            if not my_channel.broadcast:
+                print("entity: " + entity + " is not broad cast channel")
+                continue
+
         except:
             print("entity: " + entity + " can not be use!")
             failed_channel.append(entity)

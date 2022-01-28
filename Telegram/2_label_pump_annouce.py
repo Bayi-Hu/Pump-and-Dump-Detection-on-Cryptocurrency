@@ -21,6 +21,7 @@ labeled_samples = list(map(lambda x: "-".join(x[:-1].split(" ")[1:]), labeled_sa
 
 f = open("Labeled/label.txt", "a")
 
+
 for root, dirs, files in os.walk("./PreSelection"):
 
     for file in files:
