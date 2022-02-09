@@ -4,6 +4,7 @@ import os
 import pickle
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
+import time
 
 from telethon.tl.functions.messages import (GetHistoryRequest)
 from telethon.tl.types import (
@@ -41,9 +42,32 @@ async def main():
         id2channel[my_channel.id] = entity
         channel2id[entity] = my_channel.id
 
+        offset_id = 0
+        limit = 500
+        all_messages = []
+        total_messages = 0
+        # total_count_limit = 0
+        total_count_limit = 500000
+        entity = channel[13:-1]
+
+        print("Current Offset ID is:", offset_id, "; Total Messages:", total_messages)
+        history = await client(GetHistoryRequest(
+            peer=my_channel,
+            offset_id=offset_id,
+            offset_date=None,
+            add_offset=0,
+            limit=limit,
+            max_id=0,
+            min_id=0,
+            hash=0
+        ))
+
+        time.sleep(5)
+
 
 with client:
     client.loop.run_until_complete(main())
     client.disconnect()
 
     print("pause")
+

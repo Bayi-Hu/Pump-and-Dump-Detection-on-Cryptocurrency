@@ -64,9 +64,12 @@ def session_list_print(sess_list, channel_id):
         if str(channel_id) + "-" + str(sess.id) in browsed_sessions:
             continue
 
-        stop_offset = min(sess.first_pred_pump_offset + 6, len(sess.message_list))
-        start_offset = max(sess.first_pred_pump_offset-5, 0)
-        for i in range(start_offset, stop_offset):
+        stop_offset = min(sess.last_pred_pump_offset + 6, len(sess.message_list))
+        start_offset = max(sess.first_pred_pump_offset - 5, 0)
+
+        delta = 0
+        for j in range(start_offset, stop_offset):
+            i = j + delta
             message = sess.message_list[i]
             date = message.date
             content = message.content
@@ -78,14 +81,26 @@ def session_list_print(sess_list, channel_id):
             if op == "1":
                 labeling(str(channel_id), str(sess.id))
                 print("------------------------------------")
+
             elif op == "?":
+
                 print("-------------")
                 print("channel:"+ str(channel_id), " | " + "session_index:" + str(sess.id))
                 print("-------------")
+                delta -= 1
+
             elif op == "#":
                 break
             elif op == "##":
                 return
+
+            elif op == "r":
+                if j > 0:
+                    delta -= 2
+                else:
+                    print("not illegal")
+                    delta -= 1
+
             else:
                 pass
 
@@ -108,6 +123,7 @@ def labeling(channel_id, session_id):
 
 if __name__ == '__main__':
 
+    cnt = 0
     for root, dirs, files in os.walk("./Labeled"):
 
         for file in files:
@@ -115,5 +131,15 @@ if __name__ == '__main__':
                 continue
             channel_id = file.split("_")[0]
             pred_pump_session_list = load_session_list(channel_id)
-
             session_list_print(pred_pump_session_list, channel_id)
+
+    # print(cnt) 3133
+
+    # file = "1394568162_session.pkl"
+    # file = "1095533634_session.pkl"
+    #
+    # channel_id = file.split("_")[0]
+    # pred_pump_session_list = load_session_list(channel_id)
+    #
+    # print("pause")
+    # session_list_print(pred_pump_session_list, channel_id)

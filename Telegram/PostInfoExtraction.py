@@ -11,6 +11,7 @@ def load_obj(file):
     with open("./Data/" + file, "rb") as f:
         return pickle.load(f)
 
+
 class Message(object):
     def __init__(self, content, timestamp):
         self.content = content
