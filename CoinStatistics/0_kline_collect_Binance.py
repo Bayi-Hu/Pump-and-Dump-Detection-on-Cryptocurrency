@@ -12,7 +12,6 @@ from enums import *
 from utility import download_file, get_all_symbols, get_parser, get_start_end_date_objects, convert_to_date_object, \
   get_path
 
-
 def download_monthly_klines(trading_type, symbols, num_symbols, intervals, years, months, start_date, end_date, folder, checksum):
     current = 0
     date_range = None
@@ -89,48 +88,71 @@ def download_daily_klines(trading_type, symbols, num_symbols, intervals, dates, 
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("Labeled/pump_attack.txt", header=None, sep="\t",
-                     names=["channel_id", "session_id", "coin", "exchange", "pair", "timestamp"])
+    df = pd.read_csv("../Telegram/Labeled/pump_attack_new.txt", sep="\t")
 
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 
+    for i, row in df.iterrows():
 
+        print(row)
+        # row.timestamp.strftime("%Y%m%d")
 
+        try:
+            # download_daily_klines(trading_type="spot",
+            #                       symbols=[row.coin+row.pair],
+            #                       num_symbols = 1,
+            #                       intervals=["1m"],
+            #                       dates=[row.timestamp.strftime("%Y-%m-%d")],
+            #                       start_date="",
+            #                       end_date="",
+            #                       folder="",
+            #                       checksum=0)
 
+            download_monthly_klines(trading_type="spot",
+                                    symbols=[row.coin + row.pair],
+                                    num_symbols=1,
+                                    intervals=["1m"],
+                                    years=[row.timestamp.year],
+                                    months=[row.timestamp.month],
+                                    start_date=None,
+                                    end_date=None,
+                                    folder="",
+                                    checksum=0
+                                    )
 
+        except:
+            continue
 
-    with open("../Telegram/Labeled/label.txt", "r") as f:
-
-        type = "spot"
-        symbols = ["ETHUSDT", "BTCUSDT", "BNBBUSD"]
-        num_symbols = 3
-        intervals = ["1h"]
-        years = ["2020"]
-        months = [2, 12]
-        checksum = 1
-
-        parser = get_parser('klines')
-        args = parser.parse_args(sys.argv[1:])
-
-    if not args.symbols:
-        print("fetching all symbols from exchange")
-        symbols = get_all_symbols(args.type)
-        num_symbols = len(symbols)
-
-    else:
-        symbols = args.symbols
-        num_symbols = len(symbols)
-
-    if args.dates:
-        dates = args.dates
-
-    else:
-
-        dates = pd.date_range(end = datetime.today(), periods = MAX_DAYS).to_pydatetime().tolist()
-        dates = [date.strftime("%Y-%m-%d") for date in dates]
-
-        download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
-
+    #     type = "spot"
+    #     symbols = ["ETHUSDT", "BTCUSDT", "BNBBUSD"]
+    #     num_symbols = 3
+    #     intervals = ["1h"]
+    #     years = ["2020"]
+    #     months = [2, 12]
+    #     checksum = 1
+    #
+    #     parser = get_parser('klines')
+    #     args = parser.parse_args(sys.argv[1:])
+    #
+    # if not args.symbols:
+    #     print("fetching all symbols from exchange")
+    #     symbols = get_all_symbols(args.type)
+    #     num_symbols = len(symbols)
+    #
+    # else:
+    #     symbols = args.symbols
+    #     num_symbols = len(symbols)
+    #
+    # if args.dates:
+    #     dates = args.dates
+    #
+    # else:
+    #
+    #     dates = pd.date_range(end = datetime.today(), periods = MAX_DAYS).to_pydatetime().tolist()
+    #     dates = [date.strftime("%Y-%m-%d") for date in dates]
+    #
+    #     download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
+    #
     # download_daily_klines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate, args.endDate, args.folder, args.checksum)
-
-    download_monthly_klines(type, symbols, num_symbols, intervals, years, months, None, None, None, checksum)
+    #
+    # download_monthly_klines(type, symbols, num_symbols, intervals, years, months, None, None, None, checksum)
