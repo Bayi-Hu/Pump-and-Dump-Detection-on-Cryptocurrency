@@ -122,37 +122,3 @@ if __name__ == "__main__":
 
         except:
             continue
-
-    #     type = "spot"
-    #     symbols = ["ETHUSDT", "BTCUSDT", "BNBBUSD"]
-    #     num_symbols = 3
-    #     intervals = ["1h"]
-    #     years = ["2020"]
-    #     months = [2, 12]
-    #     checksum = 1
-    #
-    #     parser = get_parser('klines')
-    #     args = parser.parse_args(sys.argv[1:])
-    #
-    # if not args.symbols:
-    #     print("fetching all symbols from exchange")
-    #     symbols = get_all_symbols(args.type)
-    #     num_symbols = len(symbols)
-    #
-    # else:
-    #     symbols = args.symbols
-    #     num_symbols = len(symbols)
-    #
-    # if args.dates:
-    #     dates = args.dates
-    #
-    # else:
-    #
-    #     dates = pd.date_range(end = datetime.today(), periods = MAX_DAYS).to_pydatetime().tolist()
-    #     dates = [date.strftime("%Y-%m-%d") for date in dates]
-    #
-    #     download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
-    #
-    # download_daily_klines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate, args.endDate, args.folder, args.checksum)
-    #
-    # download_monthly_klines(type, symbols, num_symbols, intervals, years, months, None, None, None, checksum)

@@ -9,3 +9,7 @@
 /.DS_Store
 /.idea/*
 /CoinStatistics/data
+/CoinStatistics/.ipynb_checkpoints
+/CoinStatistics/binance_pump_analysis.ipynb
+/CoinStatistics/Measurement.ipynb
+/CoinStatistics/Unattack_sample_collection.ipynb
