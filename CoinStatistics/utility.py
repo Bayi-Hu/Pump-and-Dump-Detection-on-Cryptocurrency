@@ -6,7 +6,6 @@ import urllib.request
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
 from enums import *
 
-
 def get_destination_dir(file_url, folder=None):
     store_directory = os.environ.get('STORE_DIRECTORY')
     if folder:
