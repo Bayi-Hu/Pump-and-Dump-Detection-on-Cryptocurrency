@@ -108,12 +108,31 @@ if __name__ == "__main__":
             #                       folder="",
             #                       checksum=0)
 
+            # download_monthly_klines(trading_type="spot",
+            #                         symbols=[row.coin + row.pair],
+            #                         num_symbols=1,
+            #                         intervals=["1m"],
+            #                         years=[row.timestamp.year],
+            #                         months=[row.timestamp.month],
+            #                         start_date=None,
+            #                         end_date=None,
+            #                         folder="",
+            #                         checksum=0
+            #                         )
+
+            if row.timestamp.day > 3:
+                last_month_timestamp = row.timestamp - timedelta(days=15)
+
+            else:
+                last_month_timestamp = row.timestamp - timedelta(days=31)
+            # print(last_month_timestamp.year, last_month_timestamp.month)
+
             download_monthly_klines(trading_type="spot",
                                     symbols=[row.coin + row.pair],
                                     num_symbols=1,
                                     intervals=["1m"],
-                                    years=[row.timestamp.year],
-                                    months=[row.timestamp.month],
+                                    years=[last_month_timestamp.year],
+                                    months=[last_month_timestamp.month],
                                     start_date=None,
                                     end_date=None,
                                     folder="",
