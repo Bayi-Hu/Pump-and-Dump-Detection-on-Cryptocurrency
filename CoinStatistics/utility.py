@@ -1,11 +1,88 @@
 import os, sys, re, shutil
 import json
 from pathlib import Path
-from datetime import *
 import urllib.request
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
-from enums import *
+from CoinStatistics.enums import *
 
+
+def download_monthly_klines(trading_type, symbols, num_symbols, intervals, years, months, start_date, end_date, folder,
+                            checksum):
+    current = 0
+    date_range = None
+
+    if start_date and end_date:
+        date_range = start_date + " " + end_date
+    if not start_date:
+        start_date = START_DATE
+    else:
+        start_date = convert_to_date_object(start_date)
+    if not end_date:
+        end_date = END_DATE
+    else:
+        end_date = convert_to_date_object(end_date)
+
+    # print("Found {} symbols".format(num_symbols))
+    for symbol in symbols:
+        # print("[{}/{}] - start download monthly {} klines ".format(current + 1, num_symbols, symbol))
+
+        for interval in intervals:
+            for year in years:
+                for month in months:
+                    current_date = convert_to_date_object('{}-{}-01'.format(year, month))
+
+                    if current_date >= start_date and current_date <= end_date:
+                        path = get_path(trading_type, "klines", "monthly", symbol, interval)
+                        file_name = "{}-{}-{}-{}.zip".format(symbol.upper(), interval, year, '{:02d}'.format(month))
+                        download_file(path, file_name, date_range, folder)
+
+                    if checksum == 1:
+                        checksum_path = get_path(trading_type, "klines", "monthly", symbol, interval)
+                        checksum_file_name = "{}-{}-{}-{}.zip.CHECKSUM".format(symbol.upper(), interval, year,
+                                                                               '{:02d}'.format(month))
+                        download_file(checksum_path, checksum_file_name, date_range, folder)
+
+        current += 1
+
+
+def download_daily_klines(trading_type, symbols, num_symbols, intervals, dates, start_date, end_date, folder, checksum):
+    current = 0
+    date_range = None
+
+    if start_date and end_date:
+        date_range = start_date + " " + end_date
+    if not start_date:
+        start_date = START_DATE
+    else:
+        start_date = convert_to_date_object(start_date)
+    if not end_date:
+        end_date = END_DATE
+    else:
+        end_date = convert_to_date_object(end_date)
+
+    # Get valid intervals for daily
+    intervals = list(set(intervals) & set(DAILY_INTERVALS))
+    print("Found {} symbols".format(num_symbols))
+
+    for symbol in symbols:
+        print("[{}/{}] - start download daily {} klines ".format(current + 1, num_symbols, symbol))
+
+        for interval in intervals:
+            for date in dates:
+                current_date = convert_to_date_object(date)
+
+                if current_date >= start_date and current_date <= end_date:
+                    path = get_path(trading_type, "klines", "daily", symbol, interval)
+                    file_name = "{}-{}-{}.zip".format(symbol.upper(), interval, date)
+                    download_file(path, file_name, date_range, folder)
+
+                if checksum == 1:
+                    checksum_path = get_path(trading_type, "klines", "daily", symbol, interval)
+                    checksum_file_name = "{}-{}-{}.zip.CHECKSUM".format(symbol.upper(), interval, date)
+                    download_file(checksum_path, checksum_file_name, date_range, folder)
+
+        current += 1
+        
 def get_destination_dir(file_url, folder=None):
     store_directory = os.environ.get('STORE_DIRECTORY')
     if folder:
@@ -39,7 +116,7 @@ def download_file(base_path, file_name, date_range=None, folder=None):
     save_path = get_destination_dir(os.path.join(base_path, file_name), folder)
 
     if os.path.exists(save_path):
-        print("\nfile already exists! {}".format(save_path))
+        # print("\nfile already exists! {}".format(save_path))
         return
 
     # make the directory
@@ -56,7 +133,7 @@ def download_file(base_path, file_name, date_range=None, folder=None):
 
         with open(save_path, 'wb') as out_file:
             dl_progress = 0
-            print("\nFile Download: {}".format(save_path))
+            # print("\nFile Download: {}".format(save_path))
             while True:
                 buf = dl_file.read(blocksize)
                 if not buf:
@@ -68,7 +145,7 @@ def download_file(base_path, file_name, date_range=None, folder=None):
                 sys.stdout.flush()
 
     except urllib.error.HTTPError:
-        print("\nFile not found: {}".format(download_url))
+        # print("\nFile not found: {}".format(download_url))
         pass
 
 

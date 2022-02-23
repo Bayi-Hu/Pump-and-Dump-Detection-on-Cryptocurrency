@@ -6,24 +6,20 @@ from datetime import *
 def unzip(src_file, dest_dir):
     """ungz zip file"""
     zf = zipfile.ZipFile(src_file)
-    try:
-        zf.extractall(path=dest_dir)
-    except e:
-        print(e)
+    zf.extractall(path=dest_dir)
     zf.close()
 
 if __name__ == '__main__':
 
-    # dest_dir = "./data/unzip"
-    # file_list = []
-    # for root, dirs, files in os.walk("./data"):
-    #     for file in files:
-    #         if file.endswith(".zip"):
-    #
-    #             unzip(os.path.join(root, file), dest_dir)
-    #
-    # print("pause")
+    dest_dir = "./data/unzip"
+    file_list = []
+    for root, dirs, files in os.walk("./data"):
+        for file in files:
+            if file.endswith(".zip"):
 
+                unzip(os.path.join(root, file), dest_dir)
+
+    print("pause")
     dest_dir = "./data/concat"
 
     # concate the last month data with current month data
@@ -36,10 +32,10 @@ if __name__ == '__main__':
     for i, row in df.iterrows():
 
         if row.timestamp.day > 3:
-            last_month_timestamp = row.timestamp - timedelta(days=15)
+            last_month_timestamp = row.timestamp - timedelta(days=31)
 
         else:
-            last_month_timestamp = row.timestamp - timedelta(days=31)
+            last_month_timestamp = row.timestamp - timedelta(days=15)
 
         try:
             current_month_file_name = df.loc[i, "coin"] + df.loc[i, "pair"] + "-1m-" + df.loc[i, "timestamp"].strftime("%Y-%m") + ".csv"

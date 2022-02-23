@@ -13,3 +13,5 @@
 /CoinStatistics/binance_pump_analysis.ipynb
 /CoinStatistics/Measurement.ipynb
 /CoinStatistics/Unattack_sample_collection.ipynb
+/NextPumpDetection/FeatGeneration/neg_binance_required_file_name.txt
+/NextPumpDetection/FeatGeneration/pump_sample_raw.csv
