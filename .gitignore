@@ -15,3 +15,5 @@
 /CoinStatistics/Unattack_sample_collection.ipynb
 /NextPumpDetection/FeatGeneration/neg_binance_required_file_name.txt
 /NextPumpDetection/FeatGeneration/pump_sample_raw.csv
+/NextPumpDetection/FeatGeneration/neg_coin_gecko_statistics.txt
+/NextPumpDetection/FeatGeneration/coinDate2Statistics_pred3d.json

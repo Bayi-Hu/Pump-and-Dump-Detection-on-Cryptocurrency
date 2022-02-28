@@ -3,64 +3,12 @@ import numpy as np
 import pandas as pd
 from pycoingecko import CoinGeckoAPI
 import pickle as pkl
+import json
+from datetime import *
+import time
 
-symbol2coinId = dict(
-    {'REN': 'republic-protocol',
-     'SKY': 'skycoin',
-     'MET': 'metronome',
-     'REAP': 'reapchain',
-     'BNT': 'bancor',
-     'SOUL': 'phantasma',
-     'SWP': 'kava-swap',
-     'KNC': 'kyber-network',
-     'DATA': 'streamr',
-     'LOOM': 'loom-network',
-     'MORE': 'legends-room',
-     'CDT': 'blox',
-     'SNX': 'havven',
-     'MANA': 'decentraland',
-     'VIBE': 'vibe',
-     'BAS': 'basis-share',
-     'GAM': 'gamma',
-     'ELF': 'aelf',
-     'GAS': 'gas',
-     'GOD': 'bitcoin-god',
-     'ETHOS': 'ethos',
-     'GRT': 'the-graph',
-     'STORM': 'storm',
-     'AKRO': 'akropolis',
-     'DAI': 'dai',
-     'INK': 'ink',
-     'FTM': 'fantom',
-     'GVT': 'genesis-vision',
-     'ENJ': 'enjincoin',
-     'HC': 'hshare',
-     'SUSD': 'nusd',
-     'BSC': 'bitsonic-token',
-     'BTCST': 'btc-standard-hashrate-token',
-     'CREAM': 'cream-2',
-     'TKN': 'tokencard',
-     'KEEP': 'keep-network',
-     'LRC': 'loopring',
-     'SNT': 'status',
-     'AST': 'airswap',
-     'ADX': 'adex',
-     'FXS': 'frax-share',
-     'LINK': 'chainlink',
-     'ACM': 'ac-milan-fan-token',
-     'SIG': 'signal-token',
-     'ORC': 'orbit-chain',
-     'PHB': 'phoenix-global',
-     'GNT': 'greentrust',
-     'HONOR': 'honor-token',
-     'PAX': 'payperex',
-     'CVC': 'civic',
-     'BOX': 'defibox',
-     'PIE': 'pie-share',
-     'BAT': 'basic-attention-token',
-     'BTS': 'bitshares',
-     'TCT': 'tokenclub'
-})
+with open("binanceSymbol2CoinId.json", "r") as f:
+    symbol2coinId = json.load(f)
 
 cg = CoinGeckoAPI()
 coin_list = cg.get_coins_list()
@@ -68,6 +16,7 @@ coin_list = cg.get_coins_list()
 symbol2id = {}
 for c in coin_list:
     symbol2id[c["symbol"]] = c["id"]
+
 for s in symbol2coinId.keys():
     symbol2id[s.lower()] = symbol2coinId[s]
 
@@ -114,7 +63,6 @@ def pre_pump_statistics(statistics, idx, bucket_num=72, bucket_size_min=60):
         volume_tb_q_list.append(V_q_tb)
 
     return price_list, volume_list, volume_tb_list, volume_q_list, volume_tb_q_list
-
 
 if __name__ == '__main__':
 
@@ -213,8 +161,8 @@ if __name__ == '__main__':
             debug_idx2.append(i)
             continue
 
-    with open("coin_date_to_statistics_pre3d_dict", "rb") as f:
-        coin_date_to_statistics_pre3d = pkl.load(f)
+    with open("coinDate2Statistics_pred3d.json", "r") as f:
+        coin_date_to_statistics_pre3d = json.load(f)
 
     debug_cnt3 = 0
     debug_idx3 = []

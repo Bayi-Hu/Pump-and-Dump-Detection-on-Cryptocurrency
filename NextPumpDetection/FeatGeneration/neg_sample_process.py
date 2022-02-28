@@ -5,6 +5,9 @@ from pycoingecko import CoinGeckoAPI
 import pickle as pkl
 from datetime import *
 from CoinStatistics.utility import download_monthly_klines
+import zipfile
+import os
+import time
 
 # markets_coin_list = []
 # for i in range(4000):
@@ -13,9 +16,14 @@ from CoinStatistics.utility import download_monthly_klines
 
 binance_symbol = "HNT,BOND,WOO,ZEN,GRS,AAVE,LINKDOWN,DCR,UMA,FORTH,RVN,CVX,STEEM,RNDR,KSM,BAR,XTZUP,FTT,ERD,CKB,FXS,MCO,SUB,JUV,BNX,GHST,WING,CHESS,LTC,TRXDOWN,CHAT,XRPBULL,BCHUP,SNM,DGB,STPT,EGLD,TWT,SAND,XMR,BICO,TROY,REN,BAND,ACH,MBOX,GLMR,IOST,DAI,CDT,ATM,SOL,USDC,ARN,BRD,ETHBULL,FILDOWN,RSR,ADA,BURGER,YGG,TKO,SKY,BNBBEAR,OGN,CLOAK,FRONT,PERL,CLV,LOKA,RAY,WAN,EASY,AST,COTI,LINK,PAXG,GVT,KNC,DENT,LUN,NPXS,DOGE,OOKI,HIVE,XLMDOWN,MBL,GXS,FIS,NULS,TLM,ENJ,STRAT,PERP,PUNDIX,C98,FLOW,NAV,XTZDOWN,NAS,RDN,XEC,DYDX,ZRX,VEN,NEO,SRM,ANT,TORN,QNT,ICN,USDP,EOS,UTK,IDEX,GAS,BTT,REEF,ETH,LTO,JST,ALPHA,LRC,EOSUP,RCN,ARPA,ATA,BTTC,HOT,MATIC,FIO,THETA,MDX,DOT,COMP,KEEP,ENG,ASR,UNIDOWN,GALA,ELF,STMX,XRPUP,LINKUP,SNX,SANTOS,DF,TNB,KEY,VIBE,BUSD,DASH,RLC,SXP,NXS,POA,SFP,SPELL,ETHBEAR,BCHDOWN,BAT,BAKE,OM,ROSE,TRXUP,CELO,XVS,KP3R,ETHDOWN,VTHO,MDA,VET,BCHSV,ICP,NU,ACA,AUTO,AION,SNGLS,UST,FARM,BULL,QKC,HARD,AUD,USDSB,BCH,EOSBEAR,WRX,TRX,FIL,NBS,EZ,DODO,OST,REP,AMP,LUNA,LTCDOWN,FOR,CAKE,VITE,MKR,WIN,LOOM,STRAX,SUPER,MASK,LIT,EOSDOWN,MITH,TCT,BEAM,AKRO,ADX,LSK,MANA,GNO,FUN,WAVES,MOVR,SALT,TRB,POLS,UNIUP,ICX,ATOM,GTO,TVK,CHR,VOXEL,WBTC,YOYO,STORJ,EUR,SKL,APPC,AGI,ALPACA,RENBTC,SNT,GLM,MINA,AUDIO,STX,CTK,MTL,GO,NMR,LEND,PYR,BADGER,QUICK,PHX,NKN,GBP,ALPINE,FIRO,BAL,QSP,SUN,VIDT,ERN,FLM,XVG,STORM,DOTUP,AAVEDOWN,ONT,ARDR,RARE,REQ,NEBL,ALGO,BOT,PROM,DEXE,QTUM,HBAR,DOCK,CFX,ALCX,SHIB,ANY,SYS,WTC,CTXC,KLAY,OXT,CELR,BTCUP,DOTDOWN,XEM,SSV,BETA,CVP,1INCH,EOSBULL,FIDA,SUSHI,SXPDOWN,FUEL,ADADOWN,RIF,ENS,WAXP,DEGO,IOTX,BCD,PEOPLE,VGX,ANKR,UNFI,BTC,DNT,SUSHIDOWN,API3,HIGH,1INCHUP,HSR,DIA,OG,1INCHDOWN,AVA,BTCB,INS,AMB,SUSD,FTM,POND,OCEAN,BCPT,SUSHIUP,PNT,ANC,NANO,ONE,POWR,TOMO,BNT,DAR,YFII,IMX,IRIS,BEL,GRT,SC,ZIL,PLA,OAX,YFI,LPT,MLN,EDO,WINGS,AE,XNO,MFT,XLM,PPT,ACM,BTCDOWN,SLP,BTCST,HC,XTZ,AGLD,LTCUP,LAZIO,RAD,BCC,SCRT,PHA,BNB,FLUX,RUNE,EVX,BTG,DREP,XRPBEAR,TRIG,XRPDOWN,FILUP,WPR,PHB,OMG,GTC,DUSK,NEAR,IOTA,RAMP,SXPUP,PIVX,COS,INJ,BKRW,TNT,XRP,AVAX,EPS,MOD,QI,CND,QLC,KMD,TRU,GNT,JOE,RPX,ALICE,COCOS,NCASH,BLZ,USDS,XLMUP,CRV,TRIBE,BNBDOWN,ZEC,BTS,POE,XZC,CTSI,ILV,RGT,AERGO,AUCTION,UNI,LINA,ARK,FET,CHZ,POLY,AAVEUP,AGIX,YFIDOWN,BQX,MC,ETC,MTH,WNXM,BNBUP,BEAR,BCHABC,BNBBULL,ETHUP,TUSD,CVC,ADAUP,BCN,MIR,VIA,CITY,PORTO,KAVA,AXS,DLT,CMT,AR,WABI,PSG,TFUEL,VIB,JASMY,ORN,DGD,PAX,ONG,DATA,YFIUP,MDT,BZRX"
 binance_symbol_list = binance_symbol.split(",")
-
 require_binance_file_names = set()
 require_coingecko_file_names = set()
+
+download_flag = False
+zip_flag = False
+concat_flag = False
+coin_gecko_flag = False
+binance_price_flag = True
 
 if __name__ == '__main__':
     
@@ -23,7 +31,7 @@ if __name__ == '__main__':
     df = pd.read_csv("../../Telegram/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
     df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
-    
+
     try:
         require_binance_file_names = pd.read_csv("neg_binance_required_file_name.txt", names=["file_name"]).file_name.values
     except:
@@ -40,61 +48,176 @@ if __name__ == '__main__':
             for file_name in require_binance_file_names:
                 f.write(file_name+"\n")
 
-
-    last_month_file_names = set()
-    for i in range(len(require_binance_file_names)):
-        file_name = require_binance_file_names[i]
-        symbol = file_name.split("-")[0]
-        date = datetime.strptime(file_name.split("-")[1], "%Y%m")
-        download_monthly_klines(trading_type="spot",
-                                symbols=[symbol],
-                                num_symbols=1,
-                                intervals=["1m"],
-                                years=[date.year],
-                                months=[date.month],
-                                start_date=None,
-                                end_date=None,
-                                folder="",
-                                checksum=0
-                                )
-        if date.day > 3:
-            last_month_date = date - timedelta(days=31)
-        else:
-            last_month_date = date - timedelta(days=15)
-
-        last_month_file_name = symbol+"-"+date.strftime("%Y%m")
-        if last_month_file_name not in last_month_file_names and last_month_file_name not in require_binance_file_names:
-            last_month_file_names.add(last_month_file_name)
+    if download_flag:
+        last_month_file_names = set()
+        for i in range(0, len(require_binance_file_names)):
+            file_name = require_binance_file_names[i]
+            symbol = file_name.split("-")[0]
+            date = datetime.strptime(file_name.split("-")[1], "%Y%m")
             download_monthly_klines(trading_type="spot",
                                     symbols=[symbol],
                                     num_symbols=1,
                                     intervals=["1m"],
-                                    years=[last_month_date.year],
-                                    months=[last_month_date.month],
+                                    years=[date.year],
+                                    months=[date.month],
                                     start_date=None,
                                     end_date=None,
                                     folder="",
                                     checksum=0
                                     )
+            if date.day > 3:
+                last_month_date = date - timedelta(days=31)
+            else:
+                last_month_date = date - timedelta(days=15)
 
-# for coin in unattack_markets_coin_list:
-#     rand_time = random.randint(start, end)
-#     random_date = time.strftime("%d-%m-%Y", time.localtime(rand_time))
-#
-#     try:
-#         H = cg.get_coin_history_by_id(coin["id"], date=random_date)
-#
-#         key = coin["id"] + "_" + time.strftime("%Y%m%d", time.localtime(rand_time))
-#
-#         unattack_coin_id_date_to_statistics[key] = H
-#
-#     except:
-#         error_key.append(key)
-#
-#     print(str(i) + ":" + key)
-#
-#     time.sleep(1.5)
-#     i += 1
+            last_month_file_name = symbol+"-"+date.strftime("%Y%m")
+            if last_month_file_name not in last_month_file_names and last_month_file_name not in require_binance_file_names:
+                last_month_file_names.add(last_month_file_name)
+                download_monthly_klines(trading_type="spot",
+                                        symbols=[symbol],
+                                        num_symbols=1,
+                                        intervals=["1m"],
+                                        years=[last_month_date.year],
+                                        months=[last_month_date.month],
+                                        start_date=None,
+                                        end_date=None,
+                                        folder="",
+                                        checksum=0
+                                        )
+
+    if zip_flag:
+        def unzip(src_file, dest_dir):
+            """ungz zip file"""
+            zf = zipfile.ZipFile(src_file)
+            zf.extractall(path=dest_dir)
+            zf.close()
+
+        dest_dir = "../../CoinStatistics/data/unzip"
+        fail_file_list = []
+        for root, dirs, files in os.walk("../../CoinStatistics/data/spot"):
+            for file in files:
+                if file.endswith(".zip"):
+                    try:
+                        unzip(os.path.join(root, file), dest_dir)
+                    except:
+                        fail_file_list.append(file)
+
+    if concat_flag:
+
+        dest_dir = "../../CoinStatistics/data/concat"
+        columns = ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_asset_volume",
+                   "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume", "ignore"]
+
+        # concate the last month data with current month data
+        fail_file_set = set()
+        for file_name in require_binance_file_names:
+            symbol = file_name.split("-")[0]
+            date = datetime.strptime(file_name.split("-")[1], "%Y%m")
+            if date.day > 3:
+                last_month_date = date - timedelta(days=31)
+            else:
+                last_month_date = date - timedelta(days=15)
+            try:
+                current_month_file_name = symbol + "-1m-" + date.strftime("%Y-%m") + ".csv"
+                current_month_statistics = pd.read_csv("../../CoinStatistics/data/unzip/" + current_month_file_name, names=columns)
+                last_month_file_name = symbol + "-1m-" + last_month_date.strftime("%Y-%m") + ".csv"
+                last_month_statistics = pd.read_csv("../../CoinStatistics/data/unzip/" + last_month_file_name, names=columns)
+                current_month_statistics = pd.concat([last_month_statistics, current_month_statistics], axis=0)
+                current_month_statistics.to_csv(os.path.join(dest_dir, current_month_file_name), index=False)
+            except:
+                fail_file_set.add(file_name)
+                continue
+
+    if binance_price_flag:
+
+        import json
+        with open("binanceSymbol2CoinId.json", "r") as f:
+            symbol2coinId = json.load(f)
+        cg = CoinGeckoAPI()
+        coin_list = cg.get_coins_list()
+        symbol2id = {}
+        for c in coin_list:
+            symbol2id[c["symbol"]] = c["id"]
+        for s in symbol2coinId.keys():
+            symbol2id[s.lower()] = symbol2coinId[s]
+
+        file_name_list = []
+        for root, dirs, files in os.walk("../../CoinStatistics/data/concat"):
+            for file in files:
+                if file.endswith(".csv"):
+                    file_name_list.append(file)
+
+        unattack_coin_date = set()
+        count = 0
+        for i in range(len(df)):
+            if df.loc[i, "exchange"] != "binance":
+                continue
+            for symbol in binance_symbol_list:
+                if symbol == df.loc[i, "coin"]:
+                    continue
+
+                file_name = symbol + df.loc[i, "pair"] + "-1m-"  + df.loc[i, "timestamp"].strftime("%Y-%m")+".csv"
+                if file_name in file_name_list:
+                    pre_3d = df.loc[i, "timestamp"] + timedelta(days=-3)
+                    key = symbol + "_" + pre_3d.strftime("%Y%m%d")
+                    unattack_coin_date.add(key)
+                    count += 1
+
+        print("pause")
+        debug_cnt1 = 0
+        debug_cnt2 = 0
+        debug_key1 = []
+        debug_key2 = []
+        neg_coin_date_to_statistics = {}
+        f = open("neg_coin_gecko_statistics.txt", "w")
+        for key in unattack_coin_date:
+            symbol = key.split("_")[0]
+            date = key.split("_")[1]
+            try:
+                coin_id = symbol2coinId[symbol]
+            except:
+                debug_cnt1 += 1
+                debug_key1.append(symbol)
+                continue
+            date = datetime.strptime(date, "%Y%m%d").strftime("%d-%m-%Y")
+            try:
+                H = cg.get_coin_history_by_id(coin_id, date=date)
+                market_cap_usd = H["market_data"]["market_cap"]["usd"]
+                market_cap_btc = H["market_data"]["market_cap"]["btc"]
+                price_usd = H["market_data"]["current_price"]["usd"]
+                price_btc = H["market_data"]["current_price"]["btc"]
+                volume_usd = H["market_data"]["total_volume"]["usd"]
+                volume_btc = H["market_data"]["total_volume"]["btc"]
+                twitter_follower = H["community_data"]["twitter_followers"]
+                reddit_subscriber = H["community_data"]["reddit_subscribers"]
+                alexa_rank = H["public_interest_stats"]["alexa_rank"]
+
+                statistic_data = [key, market_cap_usd, market_cap_btc, price_usd, price_btc, volume_usd, volume_btc, twitter_follower, reddit_subscriber, alexa_rank]
+                f.write("\t".join(map(lambda x: str(x), statistic_data)) + "\n")
+
+            except:
+                debug_cnt2 += 1
+                debug_key2.append(key)
+                continue
+
+            time.sleep(1.3)
+
+        print("pause")
+
+
+  # statistic_data = {
+  #                   "market_cap_usd":market_cap_usd,
+  #                   "market_cap_btc":market_cap_btc,
+  #                   "price_usd":price_usd,
+  #                   "price_btc":price_btc,
+  #                   "volume_usd":volume_usd,
+  #                   "volume_btc":volume_btc,
+  #                   "twitter_follower":twitter_follower,
+  #                   "reddit_subscriber":reddit_subscriber,
+  #                   "alexa_rank":alexa_rank
+  #               }
+  #               "\t".join(statistic_data) + "\n"
+  #               neg_coin_date_to_statistics[key] = statistic_data
 
 
 # symbol2coinId = dict(
