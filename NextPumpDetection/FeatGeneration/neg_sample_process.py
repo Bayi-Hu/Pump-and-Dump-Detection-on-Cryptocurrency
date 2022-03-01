@@ -205,21 +205,6 @@ if __name__ == '__main__':
         print("pause")
 
 
-  # statistic_data = {
-  #                   "market_cap_usd":market_cap_usd,
-  #                   "market_cap_btc":market_cap_btc,
-  #                   "price_usd":price_usd,
-  #                   "price_btc":price_btc,
-  #                   "volume_usd":volume_usd,
-  #                   "volume_btc":volume_btc,
-  #                   "twitter_follower":twitter_follower,
-  #                   "reddit_subscriber":reddit_subscriber,
-  #                   "alexa_rank":alexa_rank
-  #               }
-  #               "\t".join(statistic_data) + "\n"
-  #               neg_coin_date_to_statistics[key] = statistic_data
-
-
 # symbol2coinId = dict(
 #     {'REN': 'republic-protocol',
 #      'SKY': 'skycoin',

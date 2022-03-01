@@ -40,6 +40,9 @@ coin_date_to_statistics_pre3d = {}
 for i in range(len(coin_date_to_timestamp.keys())):
     key = list(coin_date_to_timestamp.keys())[i]
     coin_symbol, date = key.split("_")
+    if coin_symbol not in ["ARN", "YOYO", 'ATM', 'BQX', 'BTCST', 'DATA', 'DREP', 'EDO',
+                           'EZ', 'FLM', 'GNT', 'GXS', 'INS', 'ONG', 'QSP', 'TCT']:
+        continue
     try:
         coin_id = symbol2id[coin_symbol.lower()]
         d = datetime.strptime(date, "%Y%m%d") + timedelta(days=-3)

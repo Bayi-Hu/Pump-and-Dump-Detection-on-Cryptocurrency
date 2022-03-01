@@ -164,6 +164,7 @@ if __name__ == '__main__':
     with open("coinDate2Statistics_pred3d.json", "r") as f:
         coin_date_to_statistics_pre3d = json.load(f)
 
+
     debug_cnt3 = 0
     debug_idx3 = []
     for i in range(len(df)):
