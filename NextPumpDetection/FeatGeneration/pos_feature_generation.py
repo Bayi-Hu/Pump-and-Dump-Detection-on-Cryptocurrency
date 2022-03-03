@@ -7,92 +7,91 @@ import pickle as pkl
 from datetime import *
 import os
 
-if __name__ == '__main__':
-    # train/validation/test 要根据时间点分，否则会有leakage
-    df = pd.read_csv("pump_sample_raw.csv")
-
-    df.loc[807, "pre_3d_market_cap_btc"] = 140.867
-    df.loc[807, "pre_3d_market_cap_usd"] = 1377987
-    df.loc[1285, "pre_3d_market_cap_usd"] = 1377987
-    df.loc[1285, "pre_3d_market_cap_btc"] = 140.867
-    df.loc[1247, "pre_3d_market_cap_usd"] = 2707118
-    df.loc[1247, "pre_3d_market_cap_btc"] = 225.352
-    df.loc[1248, "pre_3d_market_cap_usd"] = 2625736
-    df.loc[1248, "pre_3d_market_cap_btc"] = 231.999
-
-    for i in [102, 243, 415, 515, 580, 600, 872, 1056, 1094, 1314, 1331]:
-        df.loc[i, "pre_3d_market_cap_btc"] = 279.966
-        df.loc[i, "pre_3d_market_cap_usd"] = 2036283
-    df.loc[480, "pre_3d_market_cap_btc"] = 836.675
-    df.loc[480, "pre_3d_market_cap_usd"] = 8467606
-
-    df = df[df["exchange"] == "binance"]
-    df = df[df["pair"] == "BTC"]
-
-    #其余的使用平均值填充
-    for column in ['pre_3d_market_cap_usd','pre_3d_market_cap_btc', 'pre_3d_price_usd', 'pre_3d_price_btc','pre_3d_volume_usd', 'pre_3d_volume_btc', 'pre_3d_twitter_index','pre_3d_reddit_index', 'pre_3d_alexa_index']:
-        mean_val = df[column].mean()
-        df[column].fillna(mean_val, inplace=True)
-
-    price_columns = []
-    return_columns = []
-    volume_columns = []
-
-    for column in df.columns:
-        if "price" in column:
-            price_columns.append(column)
-        if "return" in column:
-            return_columns.append(column)
-        if "volume" in column:
-            volume_columns.append(column)
-
-    other_columns = ['pre_3d_alexa_index', 'pre_3d_market_cap_btc', 'pre_3d_market_cap_usd', 'pre_3d_reddit_index', 'pre_3d_twitter_index']
-
-    for column in price_columns:
-        df[column] = df[column] * (10**5)
-
-    for column in volume_columns + other_columns:
-        df[column] = np.log2(df[column]+0.1)
-
-    # sequence 化
-    for idx, row in df.iterrows():
-        feature = []
-        for column in price_columns + return_columns + volume_columns:
-            feature.append(row[column])
-
-        feature_str = "".join(map(lambda x: str(x), feature))
-        df.loc[idx, "feature"] = feature_str
-        
-
-
-    pre_feature_columns = []
-    X = pd.merge(left=df, right=df[["channel_id", "coin", "feature", "timestamp"]], how='left', on=["channel_id"],
-                 sort=False)
-    X = X[X.timestamp_x > X.timestamp_y]
-
-    def udf(df):
-        def takeFirst(elem):
-            return elem[0]
-        # output = []
-        feature_seq = []
-        coin_seq = []
-        X = list(zip(df.timestamp_y, df.coin_y, df.feature_y))
-        X.sort(key=takeFirst, reverse=True)
-        length = 0
-        for x in X:  # set max length to 100
-            coin_seq.append(str(x[1]))
-            feature_seq.append(str(x[2]))
-            length += 1
-            if length >= 50:
-                break
-        return np.array(
-            [[df.iloc[0]["channel_id"], df.iloc[0]["coin_x"], df.iloc[0]["timestamp_x"], df.iloc[0]["session_id"],
-              str(length), "\t".join(coin_seq), "\t".join(feature_seq)]])
-
-    X_ = X.groupby(["channel_id", "coin_x", "timestamp_x", "session_id"]).apply(udf)
-    channel_coin_sample_base = pd.DataFrame(np.concatenate(X_.values, axis=0), columns=["channel_id", "coin", "timestamp", "session_id", "length", "coin_seq", "feature_seq"])
-    channel_coin_sample_base.to_csv("pos_sample_fg.csv", index=False, header=False)
-
+# if __name__ == '__main__':
+#     # train/validation/test 要根据时间点分，否则会有leakage
+#     df = pd.read_csv("pump_sample_raw.csv")
+#
+#     df.loc[807, "pre_3d_market_cap_btc"] = 140.867
+#     df.loc[807, "pre_3d_market_cap_usd"] = 1377987
+#     df.loc[1285, "pre_3d_market_cap_usd"] = 1377987
+#     df.loc[1285, "pre_3d_market_cap_btc"] = 140.867
+#     df.loc[1247, "pre_3d_market_cap_usd"] = 2707118
+#     df.loc[1247, "pre_3d_market_cap_btc"] = 225.352
+#     df.loc[1248, "pre_3d_market_cap_usd"] = 2625736
+#     df.loc[1248, "pre_3d_market_cap_btc"] = 231.999
+#
+#     for i in [102, 243, 415, 515, 580, 600, 872, 1056, 1094, 1314, 1331]:
+#         df.loc[i, "pre_3d_market_cap_btc"] = 279.966
+#         df.loc[i, "pre_3d_market_cap_usd"] = 2036283
+#     df.loc[480, "pre_3d_market_cap_btc"] = 836.675
+#     df.loc[480, "pre_3d_market_cap_usd"] = 8467606
+#
+#     df = df[df["exchange"] == "binance"]
+#     df = df[df["pair"] == "BTC"]
+#
+#     #其余的使用平均值填充
+#     for column in ['pre_3d_market_cap_usd','pre_3d_market_cap_btc', 'pre_3d_price_usd', 'pre_3d_price_btc','pre_3d_volume_usd', 'pre_3d_volume_btc', 'pre_3d_twitter_index','pre_3d_reddit_index', 'pre_3d_alexa_index']:
+#         mean_val = df[column].mean()
+#         df[column].fillna(mean_val, inplace=True)
+#
+#     price_columns = []
+#     return_columns = []
+#     volume_columns = []
+#
+#     for column in df.columns:
+#         if "price" in column:
+#             price_columns.append(column)
+#         if "return" in column:
+#             return_columns.append(column)
+#         if "volume" in column:
+#             volume_columns.append(column)
+#
+#     other_columns = ['pre_3d_alexa_index', 'pre_3d_market_cap_btc', 'pre_3d_market_cap_usd', 'pre_3d_reddit_index', 'pre_3d_twitter_index']
+#
+#     for column in price_columns:
+#         df[column] = df[column] * (10**5)
+#
+#     for column in volume_columns + other_columns:
+#         df[column] = np.log2(df[column]+0.1)
+#
+#     # sequence 化
+#     for idx, row in df.iterrows():
+#         feature = []
+#         for column in price_columns + return_columns + volume_columns:
+#             feature.append(row[column])
+#
+#         feature_str = "".join(map(lambda x: str(x), feature))
+#         df.loc[idx, "feature"] = feature_str
+#
+#
+#
+#     pre_feature_columns = []
+#     X = pd.merge(left=df, right=df[["channel_id", "coin", "feature", "timestamp"]], how='left', on=["channel_id"],
+#                  sort=False)
+#     X = X[X.timestamp_x > X.timestamp_y]
+#
+#     def udf(df):
+#         def takeFirst(elem):
+#             return elem[0]
+#         # output = []
+#         feature_seq = []
+#         coin_seq = []
+#         X = list(zip(df.timestamp_y, df.coin_y, df.feature_y))
+#         X.sort(key=takeFirst, reverse=True)
+#         length = 0
+#         for x in X:  # set max length to 100
+#             coin_seq.append(str(x[1]))
+#             feature_seq.append(str(x[2]))
+#             length += 1
+#             if length >= 50:
+#                 break
+#         return np.array(
+#             [[df.iloc[0]["channel_id"], df.iloc[0]["coin_x"], df.iloc[0]["timestamp_x"], df.iloc[0]["session_id"],
+#               str(length), "\t".join(coin_seq), "\t".join(feature_seq)]])
+#
+#     X_ = X.groupby(["channel_id", "coin_x", "timestamp_x", "session_id"]).apply(udf)
+#     channel_coin_sample_base = pd.DataFrame(np.concatenate(X_.values, axis=0), columns=["channel_id", "coin", "timestamp", "session_id", "length", "coin_seq", "feature_seq"])
+#     channel_coin_sample_base.to_csv("pos_sample_fg.csv", index=False, header=False)
 
 
 class FeatGenerator(object):
@@ -177,7 +176,7 @@ class FeatGenerator(object):
         features["coin"] = coin
 
         features["seq_coin"] = seq_coin
-        features["seq_feature"] = tf.cast(seq_feature, tf.float32)
+        features["seq_feature"] = tf.string_to_number(seq_feature, out_type=tf.float32)
         features["length"] = tf.string_to_number(length, out_type=tf.int32)
 
         return features
@@ -206,7 +205,7 @@ class TensorGenerator(object):
                                                                                   feat_config["n_coin"]))
 
             # coin sequence
-            seq_coin_embedding = tf.nn.embedding_lookup(coin_embedding,
+            seq_coin_embedding = tf.nn.embedding_lookup(coin_lookup_table,
                                                         tf.string_to_hash_bucket_fast(features["seq_coin"],
                                                                                       feat_config["n_coin"]))
 
@@ -222,3 +221,16 @@ class TensorGenerator(object):
             # tensor_dict["label"] = features["label"]
 
         return tensor_dict
+
+if __name__ == '__main__':
+
+    fg = FeatGenerator("pos_sample_fg.csv")
+    features = fg.feature_generation()
+
+    tg = TensorGenerator()
+    tensor_dict = tg.embedding_layer(features, fg.feat_config)
+
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    sess.run(tensor_dict["opt_seq_embedding"])
+
