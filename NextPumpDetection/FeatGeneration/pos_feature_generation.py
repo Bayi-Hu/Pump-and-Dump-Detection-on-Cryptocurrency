@@ -66,12 +66,9 @@ if __name__ == '__main__':
 
 
     pre_feature_columns = []
-
     X = pd.merge(left=df, right=df[["channel_id", "coin", "feature", "timestamp"]], how='left', on=["channel_id"],
                  sort=False)
-
     X = X[X.timestamp_x > X.timestamp_y]
-
 
     def udf(df):
         def takeFirst(elem):
@@ -103,16 +100,17 @@ class FeatGenerator(object):
     def __init__(self, input_file):
         self.input_file = input_file # pos_sample_fg.csv
         self.feat_config = {
-            "n_channel": 100,
+            "n_channel": 200,
             "d_channel": 16,
             "n_coin": 1000,
+            "d_coin": 16,
             "n_feat": 142,
             "max_length": 50,
-            "batch_size": 128,
+            "batch_size": 20,
             "epoch": 3
         }
 
-    def parse_split(line):
+    def parse_split(self, line):
         parse_res = tf.string_split([line], delimiter=",")
         values = parse_res.values
         channel = values[0]
@@ -129,7 +127,6 @@ class FeatGenerator(object):
         split the sequence and convert to dense tensor
         """
         split_sequence = tf.string_split(sequence, delimiter="\t")
-        split_sequence = tf.string_split(sequence, delimiter="")
         split_sequence = tf.sparse_to_dense(sparse_indices=split_sequence.indices,
                                             output_shape=[self.feat_config["batch_size"],
                                                           self.feat_config["max_length"]],
@@ -138,20 +135,25 @@ class FeatGenerator(object):
         return split_sequence
 
     def parse_feature_sequence(self, sequence):
-        split_sequence = tf.string_split(feature_seq, delimiter="\t")
-        split_sequence = tf.sparse_to_dense(sparse_indices=split_sequence.indices,
-                                            output_shape=[10, 50],
+        split_sequence = tf.string_split(sequence, delimiter="\t")
+        split_sequence1 = tf.sparse_to_dense(sparse_indices=split_sequence.indices,
+                                            output_shape=[self.feat_config["batch_size"],
+                                                          self.feat_config["max_length"]],
                                             sparse_values=split_sequence.values,
-                                            default_value="".join(["0" for i in range(142)]))
-        split_sequence1 = tf.reshape(split_sequence, shape=[10 * 50])
+                                            default_value="".join(["0" for i in range(self.feat_config["n_feat"])]))
+
+        split_sequence1 = tf.reshape(split_sequence1, shape=[self.feat_config["batch_size"]*self.feat_config["max_length"]])
+
         split_sequence2 = tf.string_split(split_sequence1, delimiter="")
-        split_sequence3 = tf.sparse_to_dense(sparse_indices=split_sequence2.indices,
-                                             output_shape=[500, 142],
-                                             sparse_values=split_sequence2.values, default_value="0")
+        split_sequence2 = tf.sparse_to_dense(sparse_indices=split_sequence2.indices,
+                                             output_shape=[self.feat_config["batch_size"]*self.feat_config["max_length"],
+                                                           self.feat_config["n_feat"]],
+                                             sparse_values=split_sequence2.values,
+                                             default_value="0")
 
-        split_sequence_final = tf.reshape(split_sequence3, shape=[10, 50, 143])
+        split_sequence_final = tf.reshape(split_sequence2, shape=[-1, self.feat_config["max_length"], self.feat_config["n_feat"]])
 
-        return split_sequence3
+        return split_sequence_final
 
 
     def feature_generation(self):
@@ -175,59 +177,48 @@ class FeatGenerator(object):
         features["coin"] = coin
 
         features["seq_coin"] = seq_coin
-        features["seq_feature"] = seq_feature
+        features["seq_feature"] = tf.cast(seq_feature, tf.float32)
         features["length"] = tf.string_to_number(length, out_type=tf.int32)
 
         return features
 
 
+class TensorGenerator(object):
+
+    def __init__(self):
+        pass
+
+    def embedding_layer(self, features, feat_config):
+        with tf.name_scope('Embedding_layer'):
+            channel_lookup_table = tf.get_variable("channel_embedding_var", [feat_config["n_channel"], feat_config["d_channel"]])
+            coin_lookup_table = tf.get_variable("coin_embedding_var", [feat_config["n_coin"], feat_config["d_coin"]])
+
+            # add to summary
+            # tf.summary.histogram('channel_lookup_table', channel_lookup_table)
+            # tf.summary.histogram('coin_lookup_table', coin_lookup_table)
+
+            channel_embedding = tf.nn.embedding_lookup(channel_lookup_table,
+                                                       tf.string_to_hash_bucket_fast(features["channel"],
+                                                                                     feat_config["n_channel"]))
+
+            coin_embedding = tf.nn.embedding_lookup(coin_lookup_table,
+                                                    tf.string_to_hash_bucket_fast(features["coin"],
+                                                                                  feat_config["n_coin"]))
+
+            # coin sequence
+            seq_coin_embedding = tf.nn.embedding_lookup(coin_embedding,
+                                                        tf.string_to_hash_bucket_fast(features["seq_coin"],
+                                                                                      feat_config["n_coin"]))
 
 
-# class TensorGenerator(object):
-#
-#     def __init__(self):
-#         pass
-#
-#     def embedding_layer(self, features, feat_config):
-#
-#         with tf.name_scope('Embedding_layer'):
-#
-#             uid_lookup_table = tf.get_variable("uid_embedding_var", [feat_config["n_uid"], feat_config["d_uid"]])
-#             iid_lookup_table = tf.get_variable("iid_embedding_var", [feat_config["n_iid"], feat_config["d_iid"]])
-#             cat_lookup_table = tf.get_variable("cat_embedding_var", [feat_config["n_cid"], feat_config["d_cid"]])
-#
-#             # add to summary
-#             # tf.summary.histogram('uid_lookup_table', uid_lookup_table)
-#             # tf.summary.histogram('iid_lookup_table', iid_lookup_table)
-#             # tf.summary.histogram('cat_lookup_table', cat_lookup_table)
-#
-#             uid_embedding = tf.nn.embedding_lookup(uid_lookup_table,
-#                                                    tf.string_to_hash_bucket_fast(features["user_id"],
-#                                                                                  feat_config["n_uid"]))
-#
-#             iid_embedding = tf.nn.embedding_lookup(iid_lookup_table,
-#                                                    tf.string_to_hash_bucket_fast(features["item_id"],
-#                                                                                  feat_config["n_iid"]))
-#
-#             cat_embedding = tf.nn.embedding_lookup(cat_lookup_table,
-#                                                    tf.string_to_hash_bucket_fast(features["category"],
-#                                                                                  feat_config["n_cid"]))
-#
-#             # item sequence
-#             seq_iid_embedding = tf.nn.embedding_lookup(iid_lookup_table,
-#                                                        tf.string_to_hash_bucket_fast(features["seq_item_id"],
-#                                                                                      feat_config["n_iid"]))
-#
-#             seq_cat_embedding = tf.nn.embedding_lookup(cat_lookup_table,
-#                                                        tf.string_to_hash_bucket_fast(features["seq_category"],
-#                                                                                      feat_config["n_cid"]))
-#
-#             # concatenate the tensors
-#             tensor_dict = {}
-#             tensor_dict["user_embedding"] = uid_embedding
-#             tensor_dict["item_embedding"] = tf.concat([iid_embedding, cat_embedding], 1)
-#             tensor_dict["opt_seq_embedding"] = tf.concat([seq_iid_embedding, seq_cat_embedding], 2)
-#             tensor_dict["length"] = features["length"]
-#             tensor_dict["label"] = features["label"]
-#
-#         return tensor_dict
+            # concatenate the tensors
+            tensor_dict = {}
+            tensor_dict["channel_embedding"] = channel_embedding
+            tensor_dict["coin_embedding"] = coin_embedding
+                # tf.concat([iid_embedding, cat_embedding], 1)
+
+            tensor_dict["opt_seq_embedding"] = tf.concat([seq_coin_embedding, features["seq_feature"]], 2)
+            tensor_dict["length"] = features["length"]
+            # tensor_dict["label"] = features["label"]
+
+        return tensor_dict
