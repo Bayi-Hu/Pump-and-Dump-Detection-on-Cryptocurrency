@@ -8,9 +8,8 @@ class Model(object):
     def __init__(self, tensor_dict, train_config):
 
         self.label = tensor_dict["label"]
-
-        self.user_embedding = tensor_dict["user_embedding"]
-        self.item_embedding = tensor_dict["item_embedding"]
+        self.channel_embedding = tensor_dict["channel_embedding"]
+        self.coin_embedding = tensor_dict["coin_embedding"]
 
         # .. will add
 
@@ -27,7 +26,7 @@ class Model(object):
         """
         build the architecture for the base DNN model.
         """
-        inp = tf.concat([self.item_embedding, self.user_embedding], axis=1)
+        inp = tf.concat([self.channel_embedding, self.coin_embedding], axis=1)
         self.build_fcn_net(inp)
         self.loss_op()
 

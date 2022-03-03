@@ -13,7 +13,7 @@ class ModelSeqTargetAtten(ModelSeq):
     def target_attention_layer(self):
         # Attention layer
         with tf.name_scope('target_attention_layer'):
-            query = res_layer(self.item_embedding, dim=32, name="query")
+            query = res_layer(self.coin_embedding, dim=32, name="query")
             key = res_layer(self.opt_seq_embedding, dim=32, name="key")
             value = res_layer(self.opt_seq_embedding, dim=32, name="value")
 
@@ -32,6 +32,6 @@ class ModelSeqTargetAtten(ModelSeq):
         override the build function
         """
         self.attended_embedding = tf.squeeze(self.target_attention_layer(), axis=1)
-        inp = tf.concat([self.item_embedding, self.user_embedding, self.seq_item_embedding_sum, self.attended_embedding], axis=1)
+        inp = tf.concat([self.channel_embedding, self.coin_embedding, self.seq_coin_embedding_sum, self.attended_embedding], axis=1)
         self.build_fcn_net(inp)
         self.loss_op()

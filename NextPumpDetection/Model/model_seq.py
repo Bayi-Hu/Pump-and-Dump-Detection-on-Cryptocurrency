@@ -16,12 +16,12 @@ class ModelSeq(Model):
         dim = self.opt_seq_embedding.get_shape()[-1]
         mask_2d = tf.tile(tf.expand_dims(self.sequence_mask, axis=2), multiples=[1, 1, dim])
         self.masked_opt_seq_embedding = self.opt_seq_embedding * tf.cast(mask_2d, tf.float32) # convert bool to float
-        self.seq_item_embedding_sum = tf.reduce_sum(self.masked_opt_seq_embedding, axis=1)
+        self.seq_coin_embedding_sum = tf.reduce_sum(self.masked_opt_seq_embedding, axis=1)
 
     def build(self):
         """
         override the build function
         """
-        inp = tf.concat([self.item_embedding, self.user_embedding, self.seq_item_embedding_sum], axis=1)
+        inp = tf.concat([self.channel_embedding, self.coin_embedding, self.seq_coin_embedding_sum], axis=1)
         self.build_fcn_net(inp)
         self.loss_op()
