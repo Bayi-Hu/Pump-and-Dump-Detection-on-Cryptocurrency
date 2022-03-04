@@ -8,6 +8,7 @@ from CoinStatistics.utility import download_monthly_klines
 import zipfile
 import os
 import time
+from pos_sample_process import pre_pump_statistics
 
 # markets_coin_list = []
 # for i in range(4000):
@@ -23,7 +24,8 @@ download_flag = False
 zip_flag = False
 concat_flag = False
 coin_gecko_flag = False
-binance_price_flag = True
+gecko_statistics = False
+
 
 if __name__ == '__main__':
     
@@ -128,7 +130,7 @@ if __name__ == '__main__':
                 fail_file_set.add(file_name)
                 continue
 
-    if binance_price_flag:
+    if gecko_statistics:
 
         import json
         with open("binanceSymbol2CoinId.json", "r") as f:
@@ -202,8 +204,121 @@ if __name__ == '__main__':
 
             time.sleep(1.3)
 
-        print("pause")
+    # generate neg_sample by combining binance price history and coingecko statistics
 
+    file_name_list = []
+    for root, dirs, files in os.walk("../../CoinStatistics/data/concat"):
+        for file in files:
+            if file.endswith(".csv"):
+                file_name_list.append(file)
+
+    count = 0
+
+    # 先产生一个neg_sample_df
+
+    neg_sample_df_symbol = []
+    neg_sample_df_pair = []
+    neg_sample_df_timestamp = []
+    neg_sample_df_channel = []
+    neg_sample_df_pre3d = []
+
+    for i in range(len(df)):
+        if df.loc[i, "exchange"] != "binance":
+            continue
+        for symbol in binance_symbol_list:
+            if symbol == df.loc[i, "coin"]:
+                continue
+            file_name = symbol + df.loc[i, "pair"] + "-1m-" + df.loc[i, "timestamp"].strftime("%Y-%m") + ".csv"
+            if file_name in file_name_list:
+                neg_sample_df_channel.append(df.loc[i,"channel_id"])
+                neg_sample_df_symbol.append(symbol)
+                neg_sample_df_pair.append(df.loc[i, "pair"])
+                neg_sample_df_timestamp.append(df.loc[i, "timestamp"])
+                pre3d = df.loc[i, "timestamp"] + timedelta(days=-3)
+                neg_sample_df_pre3d.append(pre3d.strftime("%Y%m%d"))
+
+    neg_sample_df = pd.DataFrame ({
+        "channel_id": neg_sample_df_channel,
+        "coin": neg_sample_df_symbol,
+        "pair": neg_sample_df_pair,
+        "timestamp": neg_sample_df_timestamp,
+        "pre3d": neg_sample_df_pre3d
+    })
+
+    neg_sample_df["timestamp"] = neg_sample_df.timestamp.apply(pd.to_datetime)
+    neg_sample_df["timestamp_unix"] = (neg_sample_df["timestamp"].astype(int) / (10 ** 6)).astype(int)
+
+    print("pause")
+
+    for i in range(len(neg_sample_df)):
+        try:
+            file_name = neg_sample_df.loc[i, "coin"] + neg_sample_df.loc[i, "pair"] + "-1m-" + neg_sample_df.loc[i, "timestamp"].strftime("%Y-%m") + ".csv"
+            statistics = pd.read_csv("../../CoinStatistics/data/concat/" + file_name)
+        except:
+            continue
+
+        statistics["open_scale"] = statistics["open"] * 10 ** 8
+        statistics["close_scale"] = statistics["close"] * 10 ** 8
+        statistics["high_scale"] = statistics["high"] * 10 ** 8
+        statistics["low_scale"] = statistics["low"] * 10 ** 8
+        statistics["maker_buy_base_asset_volume"] = statistics["volume"] - statistics["taker_buy_base_asset_volume"]
+        statistics["maker_buy_quote_asset_volume"] = statistics["quote_asset_volume"] - statistics[
+            "taker_buy_quote_asset_volume"]
+
+        # before pump
+        idx = np.max(statistics[statistics.open_time < neg_sample_df.loc[i, "timestamp_unix"]].index)
+        idx = idx - 30
+
+        debug_cnt2 = 0
+        debug_idx2 = []
+
+        try:
+            pre_price_list, pre_volume_list, pre_volume_tb_list, pre_volume_q_list, pre_volume_tb_q_list = pre_pump_statistics(
+                statistics, idx, bucket_num=72, bucket_size_min=60)
+            return_rate = []
+            W = [1, 3, 6, 12, 24, 36, 48, 60, 72]
+            for w in W:
+
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_return"] = pre_price_list[0] / pre_price_list[w] - 1.0
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_price"] = pre_price_list[w - 1]
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_price_avg"] = np.mean(pre_price_list[:w])
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume"] = np.sum(pre_volume_list[w - 1])
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_avg"] = np.mean(pre_volume_list[:w])
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_sum"] = np.sum(pre_volume_list[:w])
+
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_tb"] = pre_volume_tb_list[w - 1]
+                if w > 1:
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_tb_avg"] = np.mean(pre_volume_tb_list[:w])
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_tb_sum"] = np.sum(pre_volume_tb_list[:w])
+
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote"] = pre_volume_q_list[w - 1]
+                if w > 1:
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote_avg"] = np.mean(pre_volume_q_list[:w])
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote_sum"] = np.sum(pre_volume_q_list[:w])
+
+                neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote_tb"] = pre_volume_tb_q_list[w - 1]
+
+                if w > 1:
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote_tb_avg"] = np.mean(pre_volume_tb_q_list[:w])
+                    neg_sample_df.loc[i, "pre_" + str(w) + "h_volume_quote_tb_sum"] = np.sum(pre_volume_tb_q_list[:w])
+
+            debug_cnt2 += 1
+
+        except:
+            debug_idx2.append(i)
+            continue
+
+    print("pause")
+
+    neg_coin_gecko_df = pd.read_csv("neg_coin_gecko_statistics.txt",
+                                    delimiter="\t",
+                                    names=["key", "pre_3d_market_cap_usd", "pre_3d_market_cap_btc", "pre_3d_price_usd", "pre_3d_price_btc", "pre_3d_volume_usd", "pre_3d_volume_btc", 'pre_3d_twitter_index','pre_3d_reddit_index', 'pre_3d_alexa_index'])
+
+    neg_coin_gecko_df[["coin", "date"]] = neg_coin_gecko_df.key.str.split("_", expand=True)
+
+    neg_coin_gecko_df_new = pd.merge(left=neg_sample_df, right=neg_coin_gecko_df, how='left', left_on=["coin", "pre3d"], right_on=["coin", "date"], sort=False)
+
+    print("pause")
 
 # symbol2coinId = dict(
 #     {'REN': 'republic-protocol',
