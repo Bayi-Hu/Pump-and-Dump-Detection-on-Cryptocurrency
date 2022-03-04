@@ -45,17 +45,16 @@ class FeatGenerator(object):
         }
 
     def parse_split(self, line):
-
         parse_res = tf.string_split([line], delimiter=",")
         values = parse_res.values
-        channel = values[0]
-        coin = values[1]
+        label = values[0]
+        channel = values[1]
+        coin = values[2]
         length = values[4]
         coin_seq = values[5]
         feature_seq = values[6]
-
-        return channel, coin, coin_seq, feature_seq, length
-
+        feature_target = values[7:]
+        return label, channel, coin, length, coin_seq, feature_seq, feature_target
 
     def parse_sequence(self, sequence):
         """
@@ -103,13 +102,15 @@ class FeatGenerator(object):
         dataset = dataset.shuffle(3).repeat(self.feat_config["epoch"]).batch(self.feat_config["batch_size"])
         iterator = dataset.make_one_shot_iterator()
 
-        channel, coin, coin_seq, feature_seq, length = iterator.get_next()
+        label, channel, coin, length, coin_seq, feature_seq, feature_target = iterator.get_next()
         seq_coin = self.parse_sequence(coin_seq)
         seq_feature = self.parse_feature_sequence(feature_seq)
 
         features = {}
         features["channel"] = channel
         features["coin"] = coin
+        features["label"] = tf.one_hot(tf.string_to_number(label, out_type=tf.int32), depth=2)
+        features["target_features"] = tf.string_to_number(feature_target, out_type=tf.float32)
 
         features["seq_coin"] = seq_coin
         features["seq_feature"] = tf.string_to_number(seq_feature, out_type=tf.float32)
@@ -145,23 +146,22 @@ class TensorGenerator(object):
                                                         tf.string_to_hash_bucket_fast(features["seq_coin"],
                                                                                       feat_config["n_coin"]))
 
-
             # concatenate the tensors
             tensor_dict = {}
+
+            tensor_dict["label"] = features["label"]
+            tensor_dict["length"] = features["length"]
             tensor_dict["channel_embedding"] = channel_embedding
             tensor_dict["coin_embedding"] = coin_embedding
-                # tf.concat([iid_embedding, cat_embedding], 1)
+            tensor_dict["target_features"] = features["target_features"]
 
             tensor_dict["opt_seq_embedding"] = tf.concat([seq_coin_embedding, features["seq_feature"]], 2)
-            tensor_dict["length"] = features["length"]
-            # tensor_dict["label"] = features["label"]
 
         return tensor_dict
 
 if __name__ == '__main__':
 
     fg = FeatGenerator("test_sample.csv")
-    print("pause")
     features = fg.feature_generation()
 
     tg = TensorGenerator()
@@ -170,4 +170,6 @@ if __name__ == '__main__':
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
     sess.run(tensor_dict["opt_seq_embedding"])
+    sess.run(tensor_dict["label"])
+    sess.run(tensor_dict["target_features"])
 
