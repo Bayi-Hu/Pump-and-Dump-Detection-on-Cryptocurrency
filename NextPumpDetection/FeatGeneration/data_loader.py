@@ -38,10 +38,11 @@ class FeatGenerator(object):
             "d_channel": 16,
             "n_coin": 1000,
             "d_coin": 16,
-            "n_feat": 142,
+            "n_seq_feat": 142,
+            "n_target_feat": 138,
             "max_length": 50,
-            "batch_size": 20,
-            "epoch": 3
+            "batch_size": 128,
+            "epoch": 3,
         }
 
     def parse_split(self, line):
@@ -74,18 +75,18 @@ class FeatGenerator(object):
                                             output_shape=[self.feat_config["batch_size"],
                                                           self.feat_config["max_length"]],
                                             sparse_values=split_sequence.values,
-                                            default_value="".join(["0" for i in range(self.feat_config["n_feat"])]))
+                                            default_value="".join(["0" for i in range(self.feat_config["n_seq_feat"])]))
 
         split_sequence1 = tf.reshape(split_sequence1, shape=[self.feat_config["batch_size"]*self.feat_config["max_length"]])
 
         split_sequence2 = tf.string_split(split_sequence1, delimiter="")
         split_sequence2 = tf.sparse_to_dense(sparse_indices=split_sequence2.indices,
                                              output_shape=[self.feat_config["batch_size"]*self.feat_config["max_length"],
-                                                           self.feat_config["n_feat"]],
+                                                           self.feat_config["n_seq_feat"]],
                                              sparse_values=split_sequence2.values,
                                              default_value="0")
 
-        split_sequence_final = tf.reshape(split_sequence2, shape=[-1, self.feat_config["max_length"], self.feat_config["n_feat"]])
+        split_sequence_final = tf.reshape(split_sequence2, shape=[-1, self.feat_config["max_length"], self.feat_config["n_seq_feat"]])
 
         return split_sequence_final
 
@@ -110,7 +111,7 @@ class FeatGenerator(object):
         features["channel"] = channel
         features["coin"] = coin
         features["label"] = tf.one_hot(tf.string_to_number(label, out_type=tf.int32), depth=2)
-        features["target_features"] = tf.string_to_number(feature_target, out_type=tf.float32)
+        features["target_features"] = tf.reshape(tf.string_to_number(feature_target, out_type=tf.float32), [-1, self.feat_config["n_target_feat"]])
 
         features["seq_coin"] = seq_coin
         features["seq_feature"] = tf.string_to_number(seq_feature, out_type=tf.float32)

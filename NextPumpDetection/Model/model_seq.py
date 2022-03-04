@@ -18,6 +18,7 @@ class ModelSeq(Model):
         self.masked_opt_seq_embedding = self.opt_seq_embedding * tf.cast(mask_2d, tf.float32) # convert bool to float
         self.seq_coin_embedding_sum = tf.reduce_sum(self.masked_opt_seq_embedding, axis=1)
 
+
     def build(self):
         """
         override the build function

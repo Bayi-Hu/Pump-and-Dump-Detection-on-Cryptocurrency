@@ -1,13 +1,12 @@
 #-*- coding:utf-8 -*-
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from FeatGeneration.fg_Amazon import FeatGenerator, TensorGenerator
-from Model.model import Model
+from NextPumpDetection.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
+from NextPumpDetection.Model.model import Model
 
 if __name__ == '__main__':
 
-    train_file = "../../FeatGeneration/Amazon/local_train_splitByUser_new"
-    test_file = "../../FeatGeneration/Amazon/local_test_splitByUser_new"
+    train_file = "../../FeatGeneration/test_sample.csv"
 
     train_fg = FeatGenerator(train_file)
     train_features = train_fg.feature_generation()
@@ -28,7 +27,7 @@ if __name__ == '__main__':
             try:
                 _, loss, acc = sess.run([model.optimizer, model.loss, model.accuracy])
 
-                if iter % 100 == 0:
+                if iter % 10 == 0:
                     print("iter=%d, loss=%f, acc=%f" %(iter, loss, acc))
 
                 iter += 1

@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from Utils.utils import *
+
 
 class Model(object):
 
@@ -10,6 +10,7 @@ class Model(object):
         self.label = tensor_dict["label"]
         self.channel_embedding = tensor_dict["channel_embedding"]
         self.coin_embedding = tensor_dict["coin_embedding"]
+        self.target_features = tensor_dict["target_features"]
 
         # .. will add
 
@@ -17,7 +18,7 @@ class Model(object):
         self.model_config = {
             "hidden1": 64,
             "hidden2": 32,
-            "learning_rate": 0.001
+            "learning_rate": 0.0005
         }
         self.train_config = train_config
         # is_training, dropout_rate
@@ -26,7 +27,7 @@ class Model(object):
         """
         build the architecture for the base DNN model.
         """
-        inp = tf.concat([self.channel_embedding, self.coin_embedding], axis=1)
+        inp = tf.concat([self.channel_embedding, self.coin_embedding, self.target_features], axis=1)
         self.build_fcn_net(inp)
         self.loss_op()
 
