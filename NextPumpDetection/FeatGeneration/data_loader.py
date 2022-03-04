@@ -25,73 +25,8 @@ import os
 #         df.loc[i, "pre_3d_market_cap_usd"] = 2036283
 #     df.loc[480, "pre_3d_market_cap_btc"] = 836.675
 #     df.loc[480, "pre_3d_market_cap_usd"] = 8467606
-#
-#     df = df[df["exchange"] == "binance"]
-#     df = df[df["pair"] == "BTC"]
-#
-#     #其余的使用平均值填充
-#     for column in ['pre_3d_market_cap_usd','pre_3d_market_cap_btc', 'pre_3d_price_usd', 'pre_3d_price_btc','pre_3d_volume_usd', 'pre_3d_volume_btc', 'pre_3d_twitter_index','pre_3d_reddit_index', 'pre_3d_alexa_index']:
-#         mean_val = df[column].mean()
-#         df[column].fillna(mean_val, inplace=True)
-#
-#     price_columns = []
-#     return_columns = []
-#     volume_columns = []
-#
-#     for column in df.columns:
-#         if "price" in column:
-#             price_columns.append(column)
-#         if "return" in column:
-#             return_columns.append(column)
-#         if "volume" in column:
-#             volume_columns.append(column)
-#
-#     other_columns = ['pre_3d_alexa_index', 'pre_3d_market_cap_btc', 'pre_3d_market_cap_usd', 'pre_3d_reddit_index', 'pre_3d_twitter_index']
-#
-#     for column in price_columns:
-#         df[column] = df[column] * (10**5)
-#
-#     for column in volume_columns + other_columns:
-#         df[column] = np.log2(df[column]+0.1)
-#
-#     # sequence 化
-#     for idx, row in df.iterrows():
-#         feature = []
-#         for column in price_columns + return_columns + volume_columns:
-#             feature.append(row[column])
-#
-#         feature_str = "".join(map(lambda x: str(x), feature))
-#         df.loc[idx, "feature"] = feature_str
-#
-#
-#
-#     pre_feature_columns = []
-#     X = pd.merge(left=df, right=df[["channel_id", "coin", "feature", "timestamp"]], how='left', on=["channel_id"],
-#                  sort=False)
-#     X = X[X.timestamp_x > X.timestamp_y]
-#
-#     def udf(df):
-#         def takeFirst(elem):
-#             return elem[0]
-#         # output = []
-#         feature_seq = []
-#         coin_seq = []
-#         X = list(zip(df.timestamp_y, df.coin_y, df.feature_y))
-#         X.sort(key=takeFirst, reverse=True)
-#         length = 0
-#         for x in X:  # set max length to 100
-#             coin_seq.append(str(x[1]))
-#             feature_seq.append(str(x[2]))
-#             length += 1
-#             if length >= 50:
-#                 break
-#         return np.array(
-#             [[df.iloc[0]["channel_id"], df.iloc[0]["coin_x"], df.iloc[0]["timestamp_x"], df.iloc[0]["session_id"],
-#               str(length), "\t".join(coin_seq), "\t".join(feature_seq)]])
-#
-#     X_ = X.groupby(["channel_id", "coin_x", "timestamp_x", "session_id"]).apply(udf)
-#     channel_coin_sample_base = pd.DataFrame(np.concatenate(X_.values, axis=0), columns=["channel_id", "coin", "timestamp", "session_id", "length", "coin_seq", "feature_seq"])
-#     channel_coin_sample_base.to_csv("pos_sample_fg.csv", index=False, header=False)
+
+column_list = "label,channel_id,coin,timestamp,length,coin_seq,feature_seq,pre_1h_return,pre_1h_price,pre_1h_price_avg,pre_1h_volume,pre_1h_volume_avg,pre_1h_volume_sum,pre_1h_volume_tb,pre_1h_volume_quote,pre_1h_volume_quote_tb,pre_3h_return,pre_3h_price,pre_3h_price_avg,pre_3h_volume,pre_3h_volume_avg,pre_3h_volume_sum,pre_3h_volume_tb,pre_3h_volume_tb_avg,pre_3h_volume_tb_sum,pre_3h_volume_quote,pre_3h_volume_quote_avg,pre_3h_volume_quote_sum,pre_3h_volume_quote_tb,pre_3h_volume_quote_tb_avg,pre_3h_volume_quote_tb_sum,pre_6h_return,pre_6h_price,pre_6h_price_avg,pre_6h_volume,pre_6h_volume_avg,pre_6h_volume_sum,pre_6h_volume_tb,pre_6h_volume_tb_avg,pre_6h_volume_tb_sum,pre_6h_volume_quote,pre_6h_volume_quote_avg,pre_6h_volume_quote_sum,pre_6h_volume_quote_tb,pre_6h_volume_quote_tb_avg,pre_6h_volume_quote_tb_sum,pre_12h_return,pre_12h_price,pre_12h_price_avg,pre_12h_volume,pre_12h_volume_avg,pre_12h_volume_sum,pre_12h_volume_tb,pre_12h_volume_tb_avg,pre_12h_volume_tb_sum,pre_12h_volume_quote,pre_12h_volume_quote_avg,pre_12h_volume_quote_sum,pre_12h_volume_quote_tb,pre_12h_volume_quote_tb_avg,pre_12h_volume_quote_tb_sum,pre_24h_return,pre_24h_price,pre_24h_price_avg,pre_24h_volume,pre_24h_volume_avg,pre_24h_volume_sum,pre_24h_volume_tb,pre_24h_volume_tb_avg,pre_24h_volume_tb_sum,pre_24h_volume_quote,pre_24h_volume_quote_avg,pre_24h_volume_quote_sum,pre_24h_volume_quote_tb,pre_24h_volume_quote_tb_avg,pre_24h_volume_quote_tb_sum,pre_36h_return,pre_36h_price,pre_36h_price_avg,pre_36h_volume,pre_36h_volume_avg,pre_36h_volume_sum,pre_36h_volume_tb,pre_36h_volume_tb_avg,pre_36h_volume_tb_sum,pre_36h_volume_quote,pre_36h_volume_quote_avg,pre_36h_volume_quote_sum,pre_36h_volume_quote_tb,pre_36h_volume_quote_tb_avg,pre_36h_volume_quote_tb_sum,pre_48h_return,pre_48h_price,pre_48h_price_avg,pre_48h_volume,pre_48h_volume_avg,pre_48h_volume_sum,pre_48h_volume_tb,pre_48h_volume_tb_avg,pre_48h_volume_tb_sum,pre_48h_volume_quote,pre_48h_volume_quote_avg,pre_48h_volume_quote_sum,pre_48h_volume_quote_tb,pre_48h_volume_quote_tb_avg,pre_48h_volume_quote_tb_sum,pre_60h_return,pre_60h_price,pre_60h_price_avg,pre_60h_volume,pre_60h_volume_avg,pre_60h_volume_sum,pre_60h_volume_tb,pre_60h_volume_tb_avg,pre_60h_volume_tb_sum,pre_60h_volume_quote,pre_60h_volume_quote_avg,pre_60h_volume_quote_sum,pre_60h_volume_quote_tb,pre_60h_volume_quote_tb_avg,pre_60h_volume_quote_tb_sum,pre_72h_return,pre_72h_price,pre_72h_price_avg,pre_72h_volume,pre_72h_volume_avg,pre_72h_volume_sum,pre_72h_volume_tb,pre_72h_volume_tb_avg,pre_72h_volume_tb_sum,pre_72h_volume_quote,pre_72h_volume_quote_avg,pre_72h_volume_quote_sum,pre_72h_volume_quote_tb,pre_72h_volume_quote_tb_avg,pre_72h_volume_quote_tb_sum,pre_3d_market_cap_usd,pre_3d_market_cap_btc,pre_3d_price_usd,pre_3d_price_btc,pre_3d_volume_usd,pre_3d_volume_btc,pre_3d_twitter_index,pre_3d_reddit_index,pre_3d_alexa_index".split(",")
 
 
 class FeatGenerator(object):
@@ -110,6 +45,7 @@ class FeatGenerator(object):
         }
 
     def parse_split(self, line):
+
         parse_res = tf.string_split([line], delimiter=",")
         values = parse_res.values
         channel = values[0]
@@ -224,7 +160,8 @@ class TensorGenerator(object):
 
 if __name__ == '__main__':
 
-    fg = FeatGenerator("pos_sample_fg.csv")
+    fg = FeatGenerator("test_sample.csv")
+    print("pause")
     features = fg.feature_generation()
 
     tg = TensorGenerator()

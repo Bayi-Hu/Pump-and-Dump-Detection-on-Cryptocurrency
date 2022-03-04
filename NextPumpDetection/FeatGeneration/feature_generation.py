@@ -104,15 +104,15 @@ neg_sample_base = neg_sample_base[column_list]
 pos_sample_base = pos_sample_base[column_list]
 
 hybrid_sample = pd.concat([neg_sample_base, pos_sample_base], axis=0)
-hybrid_sample.reset_index(inplace=True, drop=True)
+hybrid_sample = hybrid_sample.reset_index(drop=True)
 
 # shuffle
 hybrid_sample.loc[hybrid_sample.length.isna(), "length"] = 0
-hybrid_sample.loc[hybrid_sample.coin_seq.isna(), "coin_seq"] = ""
-hybrid_sample.loc[hybrid_sample.feature_seq.isna(), "feature_seq"] = ""
+hybrid_sample.loc[hybrid_sample.coin_seq.isna(), "coin_seq"] = "0"
+hybrid_sample.loc[hybrid_sample.feature_seq.isna(), "feature_seq"] = "0"
 
 hybrid_sample = hybrid_sample.loc[np.random.permutation(len(hybrid_sample))]
-hybrid_sample.reset_index(inplace=True, drop=True)
+hybrid_sample = hybrid_sample.reset_index(drop=True)
 
 # store
 hybrid_sample.to_csv("test_sample.csv", index=False, header=False)
