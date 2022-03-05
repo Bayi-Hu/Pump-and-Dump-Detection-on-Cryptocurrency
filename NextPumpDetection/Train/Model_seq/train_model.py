@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # test_fg = FeatGenerator(test_file)
     # test_features = test_fg.feature_generation()
     # test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
-    model = Model(train_tensor_dict, train_config={"is_training": True, "dropout_rate": 0.2})
+    model = Model(train_tensor_dict, train_config={"is_training": True, "dropout_rate": 0})
     model.build()
 
     with tf.Session() as sess:
@@ -25,8 +25,9 @@ if __name__ == '__main__':
         while True:
         # for i in range(100):
             try:
-                _, loss, acc = sess.run([model.optimizer, model.loss, model.accuracy])
+                _, loss, acc, l, y_ = sess.run([model.optimizer, model.loss, model.accuracy, model.label, model.y_hat])
 
+                #
                 if iter % 10 == 0:
                     print("iter=%d, loss=%f, acc=%f" %(iter, loss, acc))
 

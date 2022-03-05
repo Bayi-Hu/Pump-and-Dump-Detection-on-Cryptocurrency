@@ -41,7 +41,7 @@ class FeatGenerator(object):
             "n_seq_feat": 142,
             "n_target_feat": 138,
             "max_length": 50,
-            "batch_size": 128,
+            "batch_size": 256,
             "epoch": 3,
         }
 
