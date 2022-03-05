@@ -38,9 +38,9 @@ for column in pos_df.columns:
 other_columns = ['pre_3d_alexa_index', 'pre_3d_market_cap_btc', 'pre_3d_market_cap_usd', 'pre_3d_reddit_index', 'pre_3d_twitter_index']
 
 for column in price_columns:
-    pos_df[column] = pos_df[column] * (10**5)
     if column == "pre_3d_price_usd":
         continue
+    pos_df[column] = pos_df[column] * (10**5)
     try:
         neg_df[column] = neg_df[column] * (10**5)
     except:
@@ -115,7 +115,7 @@ neg_sample_base.loc[neg_sample_base.feature_seq.isna(), "feature_seq"] = "0"
 
 
 # split
-split_timestamp_unix = 1612386016000
+split_timestamp_unix = 1620579621000
 
 test_pos_sample_base = pos_sample_base[pos_sample_base.timestamp_unix >= split_timestamp_unix]
 train_pos_sample_base = pos_sample_base[pos_sample_base.timestamp_unix < split_timestamp_unix]

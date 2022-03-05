@@ -19,3 +19,4 @@
 /NextPumpDetection/FeatGeneration/coinDate2Statistics_pred3d.json
 /NextPumpDetection/FeatGeneration/neg_sample_raw.csv
 /NextPumpDetection/FeatGeneration/test_sample.csv
+/NextPumpDetection/FeatGeneration/train_sample.csv
