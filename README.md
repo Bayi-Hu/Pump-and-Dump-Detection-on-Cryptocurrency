@@ -9,7 +9,7 @@ This is the dataset and source code used in the paper "Target Coin Prediction fo
 
 The workflow mainly consists of two parts: data collection and target coin prediction. 
 
-<div align=center><img width="700" height="250" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/workflow.png"/></div>
+<div align=center><img width="680" height="270" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/workflow.png"/></div>
 
 Data collection corresponds to the "0_TelegramData" fold, and target coin prediction corresponds to the "1_Statistics" and "TargetCoinPrediction" folds.
 
