@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from NextPumpDetection.Model.model import Model
+from TargetCoinPrediction.Model.model import Model
 
 
 class ModelSeq(Model):

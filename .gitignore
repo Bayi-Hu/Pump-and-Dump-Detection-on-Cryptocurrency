@@ -1,9 +1,8 @@
-/Telegram/raw/all_clean_message.txt
-/Telegram/PreSelection/*
-/Telegram/anon.session
+/TelegramData/raw/all_clean_message.txt
+/TelegramData/PreSelection/*
 /.DS_Store
 /.idea/*
 /CoinStatistics/data/*
-/NextPumpDetection/FeatGeneration/raw/*
-/NextPumpDetection/FeatGeneration/feature/*
-/NextPumpDetection/Train/Model_seq_pos/save_log/*
+/TargetCoinPrediction/FeatGeneration/raw/*
+/TargetCoinPrediction/FeatGeneration/feature/*
+/TargetCoinPrediction/Train/Model_seq_pos/save_log/*

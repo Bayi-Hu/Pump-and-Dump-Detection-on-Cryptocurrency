@@ -30,7 +30,7 @@ gecko_statistics = False
 if __name__ == '__main__':
     
     # train/validation/test 要根据时间点分，否则会有leakage
-    df = pd.read_csv("../../Telegram/Labeled/pump_attack_new.txt", sep="\t")
+    df = pd.read_csv("../../TelegramData/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
     df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
 

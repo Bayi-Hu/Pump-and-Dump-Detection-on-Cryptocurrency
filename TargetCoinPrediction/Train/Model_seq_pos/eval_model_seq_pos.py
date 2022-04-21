@@ -2,8 +2,8 @@
 import pandas as pd
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from NextPumpDetection.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
-from NextPumpDetection.Model.model_seq_pos import ModelSeqPos
+from TargetCoinPrediction.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
+from TargetCoinPrediction.Model.model_seq_pos import ModelSeqPos
 from sklearn import metrics
 import numpy as np
 from sklearn.metrics import precision_recall_curve

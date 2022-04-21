@@ -13,7 +13,7 @@ from utility import download_monthly_klines, download_daily_klines
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("../Telegram/Labeled/pump_attack_new.txt", sep="\t")
+    df = pd.read_csv("../TelegramData/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 
     for i, row in df.iterrows():

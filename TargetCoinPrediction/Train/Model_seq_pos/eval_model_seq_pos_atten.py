@@ -2,8 +2,8 @@
 import pandas as pd
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from NextPumpDetection.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
-from NextPumpDetection.Model.model import Model
+from TargetCoinPrediction.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
+from TargetCoinPrediction.Model.model_seq_pos_atten import ModelSeqPosAtten
 from sklearn import metrics
 import numpy as np
 from sklearn.metrics import precision_recall_curve
@@ -24,12 +24,12 @@ if __name__ == '__main__':
     # test_fg = FeatGenerator(test_file)
     # test_features = test_fg.feature_generation()
     # test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
-    model = Model(test_tensor_dict, train_config={"is_training": False, "dropout_rate": 0})
+    model = ModelSeqPosAtten(test_tensor_dict, train_config={"is_training": False, "dropout_rate": 0})
     model.build()
 
     auc_value_list = []
-    for epoch in range(4,31):
-        ckpt = "./save_log/model_" + str(epoch)
+    for epoch in range(1,31):
+        ckpt = "./save_log/model_seq_pos_atten" + str(epoch)
         saver = tf.train.Saver()
 
         pre_probas = []
@@ -115,6 +115,7 @@ def hitrate(k):
     return test_hitrate.label_num.mean()
 
 
+
 threshold = 0.1
 y_pred = np.zeros_like(pre_probas)
 y_pred[np.where(np.array(pre_probas) >= threshold)[0]] = 1
@@ -137,4 +138,3 @@ plt.ylabel("tpr")
 plt.plot(fpr, tpr)
 
 # hitrate calculation
-

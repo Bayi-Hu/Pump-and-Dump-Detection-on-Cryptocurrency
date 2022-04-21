@@ -23,7 +23,7 @@ if __name__ == '__main__':
     dest_dir = "./data/concat"
 
     # concate the last month data with current month data
-    df = pd.read_csv("../Telegram/Labeled/pump_attack_new.txt", sep="\t")
+    df = pd.read_csv("../TelegramData/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 
     columns = ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_asset_volume",

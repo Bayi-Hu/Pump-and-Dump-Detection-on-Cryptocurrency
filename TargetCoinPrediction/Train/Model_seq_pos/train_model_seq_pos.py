@@ -1,8 +1,8 @@
 #-*- coding:utf-8 -*-
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from NextPumpDetection.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
-from NextPumpDetection.Model.model_seq import ModelSeq
+from TargetCoinPrediction.FeatGeneration.data_loader import FeatGenerator, TensorGenerator
+from TargetCoinPrediction.Model.model_seq_pos import ModelSeqPos
 from sklearn import metrics
 import numpy as np
 import os
@@ -10,6 +10,8 @@ import os
 if __name__ == '__main__':
 
     train_file = "../../FeatGeneration/feature/train_nolog_norm_sample.csv"; sample_num = 132314
+
+    # train_file = "../../FeatGeneration/balanced_train_sample.csv"; epoch1_iter = 357
 
     train_fg = FeatGenerator(train_file)
     train_fg.feat_config["epoch"] = 30
@@ -20,7 +22,7 @@ if __name__ == '__main__':
     # test_fg = FeatGenerator(test_file)
     # test_features = test_fg.feature_generation()
     # test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
-    model = ModelSeq(train_tensor_dict, train_config={"is_training": True, "dropout_rate": 0})
+    model = ModelSeqPos(train_tensor_dict, train_config={"is_training": True, "dropout_rate": 0})
     model.build()
 
     checkpoint_dir = "./save_log"
@@ -49,10 +51,8 @@ if __name__ == '__main__':
                 iter += 1
 
                 if iter % save_iter == 0 and iter > 0:
-                    saver.save(sess, os.path.join(checkpoint_dir, "model_seq" + str(round(iter / save_iter))))
+                    saver.save(sess, os.path.join(checkpoint_dir, "model_seq_pos" + str(round(iter / save_iter))))
 
             except Exception as e:
                 print(e)
-                # save model
-                # saver.save(sess, os.path.join(checkpoint_dir, "model_" + str(iter)))
                 break

@@ -21,7 +21,7 @@ for c in coin_list:
 for s in symbol2coinId.keys():
     symbol2id[s.lower()] = symbol2coinId[s]
 
-df = pd.read_csv("../../Telegram/Labeled/pump_attack_new.txt", sep="\t")
+df = pd.read_csv("../../TelegramData/Labeled/pump_attack_new.txt", sep="\t")
 df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
 
