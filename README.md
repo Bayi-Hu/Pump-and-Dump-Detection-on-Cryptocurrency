@@ -1,1 +1,1 @@
-# Pump-and-Dump-Detection-on-Cryptocurrency
+# Target-Coin-Prediction-for-Cryptocurrency-Pump-and-Dump
