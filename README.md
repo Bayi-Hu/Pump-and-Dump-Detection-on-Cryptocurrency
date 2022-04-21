@@ -15,7 +15,7 @@ Data collection corresponds to the "0_TelegramData" fold, and target coin predic
 
 ### Dataset
 
-The P&D [dataset](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/0_TelegramData/Labeled/pump_attack_new.txt) released includes 1,335 samples that consists of 709 P&Ds that we observed on Telegram from January 1, 2019 to January 15, 2022. We will continuously update this dataset.
+The [P&D dataset](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/0_TelegramData/Labeled/pump_attack_new.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram from January 1, 2019 to January 15, 2022. We will continuously update this dataset.
 
 ### Results
 
@@ -44,7 +44,9 @@ The P&D [dataset](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocu
 * TensorFlow >= 1.4.0
 
 ### Download the Dataset
-<!-- 
+
+Due to the 100MB limitation on a single file, we upload our contructed features on the Google Drive.
+
 * Step 1: Download the amazon product dataset of electronics category, which has 498,196 products and 7,824,482 records, and extract it to `raw_data/` folder.
 ```sh
 mkdir raw_data/;
@@ -55,7 +57,7 @@ bash 0_download_raw.sh;
 ```sh
 python 1_convert_pd.py;
 python 2_remap_id.py
-``` -->
+```
 
 ### Preprocess
 
