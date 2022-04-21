@@ -10,7 +10,6 @@ import os
 if __name__ == '__main__':
 
     train_file = "../../FeatGeneration/feature/train_nolog_norm_sample.csv"; sample_num = 132314
-
     # train_file = "../../FeatGeneration/balanced_train_sample.csv"; epoch1_iter = 357
 
     train_fg = FeatGenerator(train_file)
