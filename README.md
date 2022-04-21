@@ -19,6 +19,15 @@ The [P&D dataset](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocu
 
 ### Results
 
+**Pump Message Detection**
+| Model | AUC | Precision | Recall| F1|
+| ------  | ------ |----| ---|---|
+|LR  |0.988| 0.892| 0.913|0.902|
+|RF |0.994| 0.901| 0.939|0.920|
+
+
+**Target Coin Prediction**
+
 | Metrics | Random | LR | DNN| SNNv|SNN|
 | ------  | ------ |----| ---|---|---|
 |AUC  |0.500| 0.888| 0.920|0.927|0.935|
