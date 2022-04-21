@@ -3,7 +3,7 @@
 /Telegram/anon.session
 /.DS_Store
 /.idea/*
-/CoinStatistics/data
+/CoinStatistics/data/*
 /NextPumpDetection/FeatGeneration/raw/*
 /NextPumpDetection/FeatGeneration/feature/*
 /NextPumpDetection/Train/Model_seq_pos/save_log/*
