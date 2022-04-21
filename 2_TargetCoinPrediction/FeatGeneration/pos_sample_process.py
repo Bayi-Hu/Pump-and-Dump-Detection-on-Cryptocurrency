@@ -72,7 +72,7 @@ if __name__ == '__main__':
     debug_idx2 = []
 
     # train/validation/test 要根据时间点分，否则会有leakage
-    df = pd.read_csv("../../TelegramData/Labeled/pump_attack_new.txt", sep="\t")
+    df = pd.read_csv("../../0_TelegramData/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
     df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             continue
         try:
             file_name = df.loc[i, "coin"] + df.loc[i, "pair"] + "-1m-" + df.loc[i, "timestamp"].strftime("%Y-%m") + ".csv"
-            statistics = pd.read_csv("../../CoinStatistics/data/concat/" + file_name)
+            statistics = pd.read_csv("../../1_Statistics/data/concat/" + file_name)
             debug_cnt1 += 1
 
         except:
