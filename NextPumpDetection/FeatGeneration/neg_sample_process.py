@@ -35,7 +35,7 @@ if __name__ == '__main__':
     df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
 
     try:
-        require_binance_file_names = pd.read_csv("neg_binance_required_file_name.txt", names=["file_name"]).file_name.values
+        require_binance_file_names = pd.read_csv("raw/neg_binance_required_file_name.txt", names=["file_name"]).file_name.values
     except:
         for i in range(len(df)):
             if df.loc[i, "exchange"] != "binance":
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                 file_name = symbol + df.loc[i, "pair"] + "-" + df.loc[i, "timestamp"].strftime("%Y%m")
                 require_binance_file_names.add(file_name)
 
-        with open("neg_binance_required_file_name.txt", "w") as f:
+        with open("raw/neg_binance_required_file_name.txt", "w") as f:
             for file_name in require_binance_file_names:
                 f.write(file_name+"\n")
 
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     if gecko_statistics:
 
         import json
-        with open("binanceSymbol2CoinId.json", "r") as f:
+        with open("raw/binanceSymbol2CoinId.json", "r") as f:
             symbol2coinId = json.load(f)
         cg = CoinGeckoAPI()
         coin_list = cg.get_coins_list()
@@ -171,7 +171,7 @@ if __name__ == '__main__':
         debug_key1 = []
         debug_key2 = []
         neg_coin_date_to_statistics = {}
-        f = open("neg_coin_gecko_statistics.txt", "w")
+        f = open("raw/neg_coin_gecko_statistics.txt", "w")
         for key in unattack_coin_date:
             symbol = key.split("_")[0]
             date = key.split("_")[1]
@@ -310,7 +310,7 @@ if __name__ == '__main__':
 
     print("pause")
 
-    neg_coin_gecko_df = pd.read_csv("neg_coin_gecko_statistics.txt",
+    neg_coin_gecko_df = pd.read_csv("raw/neg_coin_gecko_statistics.txt",
                                     delimiter="\t",
                                     names=["key", "pre_3d_market_cap_usd", "pre_3d_market_cap_btc", "pre_3d_price_usd", "pre_3d_price_btc", "pre_3d_volume_usd", "pre_3d_volume_btc", 'pre_3d_twitter_index','pre_3d_reddit_index', 'pre_3d_alexa_index'])
 

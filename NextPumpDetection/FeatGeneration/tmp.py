@@ -8,7 +8,7 @@ from datetime import *
 import time
 import json
 
-with open("binanceSymbol2CoinId.json", "r") as f:
+with open("raw/binanceSymbol2CoinId.json", "r") as f:
     symbol2coinId = json.load(f)
 
 cg = CoinGeckoAPI()

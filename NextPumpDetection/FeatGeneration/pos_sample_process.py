@@ -7,7 +7,7 @@ import json
 from datetime import *
 import time
 
-with open("binanceSymbol2CoinId.json", "r") as f:
+with open("raw/binanceSymbol2CoinId.json", "r") as f:
     symbol2coinId = json.load(f)
 
 cg = CoinGeckoAPI()
@@ -161,7 +161,7 @@ if __name__ == '__main__':
             debug_idx2.append(i)
             continue
 
-    with open("coinDate2Statistics_pred3d.json", "r") as f:
+    with open("raw/coinDate2Statistics_pred3d.json", "r") as f:
         coin_date_to_statistics_pre3d = json.load(f)
 
 
@@ -209,7 +209,6 @@ if __name__ == '__main__':
             continue
 
     print("pause")
-
     df.to_csv("pump_sample_raw.csv", index = False)
 
 

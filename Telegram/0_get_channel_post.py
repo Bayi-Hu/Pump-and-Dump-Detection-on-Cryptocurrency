@@ -3,7 +3,6 @@ import json
 import os
 import pickle
 
-
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
 
@@ -18,16 +17,16 @@ api_hash = 'aa62488becc0e9765efaea67811f5de5'
 client = TelegramClient('anon', api_id, api_hash, proxy=("socks5", '127.0.0.1', 7890))
 
 def save_obj(obj, name):
-    with open("./Data/" + name + ".pkl", "wb") as f:
+    with open("./raw/" + name + ".pkl", "wb") as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 async def main():
 
-    with open("./Data/PUMPOLYMP_public_channel2", "r") as f:
+    with open("raw/PUMPOLYMP_public_channel2", "r") as f:
         Channels = f.readlines()
 
     failed_channel = []
-    exist_channel = list(map(lambda y: y[:-4], os.listdir("./Data")))
+    exist_channel = list(map(lambda y: y[:-4], os.listdir("raw")))
 
     for channel in Channels:
 
@@ -83,7 +82,6 @@ async def main():
 with client:
     client.loop.run_until_complete(main())
 
-
 # def load_obj(name):
-#     with open("./Data/" + name +".pkl", "rb") as f:
+#     with open("./raw/" + name +".pkl", "rb") as f:
 #         return pickle.load(f)

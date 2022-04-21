@@ -1,31 +1,35 @@
 import os
-from PostInfoExtraction import Message, load_obj
+import pickle
+from urlextract import URLExtract
+
+def load_obj(file):
+    with open("./raw/" + file, "rb") as f:
+        return pickle.load(f)
 
 if __name__ == '__main__':
     all_channels_urls = []
-    for root, dirs, files in os.walk("./Data"):
+    for root, dirs, files in os.walk("raw"):
 
         for file in files:
-            if (file.startswith("@") and file.endswith(".pkl")):
+            if file.endswith(".pkl"):
                 # all_messages = load_obj("@Crypto_Bitcoin_Pump##1198780255.pkl")
                 all_messages = load_obj(file)
                 channel_urls = []
                 for m in all_messages:
+
+                    if m["from_id"] != None or m["_"] != "Message":
+                        continue
                     try:
-                        msg = Message(m["message"], m["date"])
-                        if (len(msg.urls)) > 0:
-                            channel_urls += msg.urls
+                        extractor = URLExtract()
+                        urls = extractor.find_urls(m["message"])
+                        if len(urls) == 0:
+                            continue
+                        for url in urls:
+                            if "t.me" in url:
+                                all_channels_urls.append(url)
                     except:
                         continue
 
-                if len(channel_urls) > 0:
-                    all_channels_urls += channel_urls
-                    print(channel_urls)
-
     print("pause")
-
-with open("invite_urls_onehop", "wb") as f:
-
-    f.write(all_channels_urls_new)
 
 

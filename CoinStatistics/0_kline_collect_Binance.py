@@ -14,36 +14,11 @@ from utility import download_monthly_klines, download_daily_klines
 if __name__ == "__main__":
 
     df = pd.read_csv("../Telegram/Labeled/pump_attack_new.txt", sep="\t")
-
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 
     for i, row in df.iterrows():
-
         print(row)
-
         try:
-            # download_daily_klines(trading_type="spot",
-            #                       symbols=[row.coin+row.pair],
-            #                       num_symbols = 1,
-            #                       intervals=["1m"],
-            #                       dates=[row.timestamp.strftime("%Y-%m-%d")],
-            #                       start_date="",
-            #                       end_date="",
-            #                       folder="",
-            #                       checksum=0)
-
-            # download_monthly_klines(trading_type="spot",
-            #                         symbols=[row.coin + row.pair],
-            #                         num_symbols=1,
-            #                         intervals=["1m"],
-            #                         years=[row.timestamp.year],
-            #                         months=[row.timestamp.month],
-            #                         start_date=None,
-            #                         end_date=None,
-            #                         folder="",
-            #                         checksum=0
-            #                         )
-
             if row.timestamp.day > 3:
                 last_month_timestamp = row.timestamp - timedelta(days=31)
 
