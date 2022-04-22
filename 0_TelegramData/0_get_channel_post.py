@@ -11,8 +11,8 @@ from telethon.tl.types import (
 PeerChannel
 )
 
-api_id = 10732642
-api_hash = 'aa62488becc0e9765efaea67811f5de5'
+api_id = 123 # please fill in your api_id
+api_hash = "1234" # please fill in your api_hash
 
 client = TelegramClient('anon', api_id, api_hash, proxy=("socks5", '127.0.0.1', 7890))
 

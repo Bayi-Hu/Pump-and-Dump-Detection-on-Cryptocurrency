@@ -175,17 +175,4 @@ class TensorGenerator(object):
 
         return tensor_dict
 
-if __name__ == '__main__':
-
-    fg = FeatGenerator("feature/test_sample.csv")
-    features = fg.feature_generation()
-
-    tg = TensorGenerator()
-    tensor_dict = tg.embedding_layer(features, fg.feat_config)
-
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    sess.run(tensor_dict["opt_seq_embedding"])
-    sess.run(tensor_dict["label"])
-    sess.run(tensor_dict["target_features"])
 
