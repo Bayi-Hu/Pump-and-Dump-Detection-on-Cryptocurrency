@@ -52,40 +52,69 @@ The [P&D dataset](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocu
 * NumPy >= 1.12.1
 * TensorFlow >= 1.4.0
 
-### Download the Dataset
 
-Due to the 100MB limitation on a single file, we upload our contructed features on the Google Drive.
+### P&D Data Collection
 
-* Step 1: Download the amazon product dataset of electronics category, which has 498,196 products and 7,824,482 records, and extract it to `raw_data/` folder.
-```sh
-mkdir raw_data/;
-cd utils;
-bash 0_download_raw.sh;
+The pipleline of P&D data collection from Telegram:
+
 ```
-* Step 2: Convert raw data to pandas dataframe, and remap categorical id.
-```sh
-python 1_convert_pd.py;
-python 2_remap_id.py
+cd 0_TelegramData
+python 0_get_channel_post.py          # note that you need to fill in your own Telegram api_id and api_hash. You can apply in https://core.telegram.org
+python 1_keyword_filtering.py
+python 2_pump_message_labeling.py     # we have alreadly labeled 5000+ samples in ./Labeled/label.txt
+python 3_message_fg.py 
+python 4_classifier_training.py 
+python 5_classifier_prediction.py
+python 6_session_aggregation.py
+python 7_P&D_labeling.py              
+python 8_data_cleaning.py             # generate the final P&D samples in ./Labeled/pump_attack_new.txt
 ```
 
-### Preprocess
+
+### Feature Generation
+
+There are two ways for feature generation:
+
+#### 1. Generate feature from the raw P&D dataset
+
+* Step 1: Download the historical statistics.
+
+```
+cd 1_Statistics
+python 0_kline_collect_Binance.py
+python 1_data_process.py
+```
+
+* Step 2: Generate features for positive and negative samples respectively.
+
+```
+cd TargetCoinPrediction/FeatureGeneration
+python feature_generation.py
+python pos_sample_process.py
+python neg_sample_process.py
+```
+
+#### 2. Download contructed features from our Google Drive
 
 
-### Training and Evaluation
+
+
+### Target Coin Prediction
+
+#### Training
 
 This implementation not only contains the SNN method, but also provides other competitors' methods, including DNN and SNNv. The training procedures of all method is as follows:
 
+```
+cd TargetCoinPrediction/Train
+```
 
 ```
-python experiments.py --model=simple-cnn \
-    --dataset=cifar10 \
-    --alg=fedprox \
+python train_model_seq_pos_atten.py
     --lr=0.01 \
-    --batch-size=64 \
-    --epochs=10 \
+    --batch-size=256 \
+    --epochs=20 \
     --n_parties=10 \
-    --mu=0.01 \
-    --rho=0.9 \
     --comm_round=50 \
     --partition=noniid-labeldir \
     --beta=0.5\
@@ -96,6 +125,27 @@ python experiments.py --model=simple-cnn \
     --sample=1 \
     --init_seed=0
 ```
+
+
+#### Evaluation
+
+```
+python eval_model_seq_pos_atten.py
+    --lr=0.01 \
+    --batch-size=256 \
+    --epochs=20 \
+    --n_parties=10 \
+    --comm_round=50 \
+    --partition=noniid-labeldir \
+    --beta=0.5\
+    --device='cuda:0'\
+    --datadir='./data/' \
+    --logdir='./logs/' \
+    --noise=0 \
+    --sample=1 \
+    --init_seed=0
+```
+
 
 | Parameter                      | Description                                 |
 | ----------------------------- | ---------------------------------------- |
@@ -113,5 +163,8 @@ python experiments.py --model=simple-cnn \
 | `noise` | Maximum variance of Gaussian noise we add to local party, default = `0`. |
 | `sample` | Ratio of parties that participate in each communication round, default = `1`. |
 | `init_seed` | The initial seed, default = `0`. |
+
+
+
 
 
