@@ -96,17 +96,18 @@ python neg_sample_process.py
 
 #### 2. Download contructed features from our Google Drive
 
-
+* [Training set (2.16GB)](https://drive.google.com/file/d/1u2Ichky12k-ZTHDhqgFLM5WzlH26JnKa/view?usp=sharing)
+* [Testing set (1.02GB)](https://drive.google.com/file/d/1slLs-OqMqzLHrmvzbf8xlyP2zzDpIk1R/view?usp=sharing)
 
 ### Target Coin Prediction
-
-#### Training
 
 This implementation not only contains the SNN method, but also provides other competitors' methods, including DNN and SNNv. The training procedures of all method is as follows:
 
 ```
 cd TargetCoinPrediction/Train
 ```
+
+#### Training
 
 ```
 python train_model_seq_pos_atten.py
@@ -124,7 +125,6 @@ python train_model_seq_pos_atten.py
     --sample=1 \
     --init_seed=0
 ```
-
 
 #### Evaluation
 
@@ -157,6 +157,12 @@ python eval_model_seq_pos_atten.py
 | `sample` | Ratio of parties that participate in each communication round, default = `1`. |
 | `init_seed` | The initial seed, default = `0`. |
 
+
+---
+
+### Citation
+
+If you think this repository useful, please cite our paper:
 
 
 
