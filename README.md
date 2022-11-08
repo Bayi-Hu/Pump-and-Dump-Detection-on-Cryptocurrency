@@ -3,12 +3,12 @@
 
 # Sequence-based Target Coin Prediction for Cryptocurrency Pump-and-Dump (SIGMOD 2023)
 
-This is the repo that includes dataset and source code used in the paper ["Target Coin Prediction for Cryptocurrency Pump-and-Dump"](https://arxiv.org/pdf/2204.12929.pdf).
+This is the repo including dataset and source code used in the paper ["Sequence-based Target Coin Prediction for Cryptocurrency Pump-and-Dump"](https://arxiv.org/pdf/2204.12929.pdf).
 
 <!-- <div align=center><img width="360" height="250" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/showcase.png"/></div> -->
 
 
-### Workflow
+### Data Science Pipeline
 
 The workflow mainly consists of two parts: data collection and target coin prediction. 
 
