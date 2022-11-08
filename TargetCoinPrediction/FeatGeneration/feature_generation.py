@@ -220,7 +220,7 @@ test_sample.coin_id = test_sample.coin_id.astype(int)
 test_sample.channel_id_new = test_sample.channel_id_new.astype(int)
 
 # store
-train_sample.to_csv("train_nolog_norm_sample.csv", index=False, header=False)
-test_sample.to_csv("test_nolog_norm_sample.csv", index=False, header=False)
+train_sample.to_csv("train_sample.csv", index=False, header=False)
+test_sample.to_csv("test_sample.csv", index=False, header=False)
 # do not forget to mannually split the training and testing set by time
 

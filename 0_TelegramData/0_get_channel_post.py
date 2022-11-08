@@ -11,10 +11,11 @@ from telethon.tl.types import (
 PeerChannel
 )
 
-api_id = 10732642
-api_hash = 'aa62488becc0e9765efaea67811f5de5'
+api_id = 123 # please fill in your api_id
+api_hash = "1234" # please fill in your api_hash
 
-client = TelegramClient('anon', api_id, api_hash, proxy=("socks5", '127.0.0.1', 7890))
+# client = TelegramClient('anon', api_id, api_hash, proxy=("socks5", '127.0.0.1', 7890))
+client = TelegramClient('anon', api_id, api_hash)
 
 def save_obj(obj, name):
     with open("./raw/" + name + ".pkl", "wb") as f:
@@ -77,7 +78,6 @@ async def main():
 
         print("pause")
         save_obj(all_messages, str(my_channel.id))
-
 
 with client:
     client.loop.run_until_complete(main())

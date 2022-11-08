@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
 
-    test_file = "../../FeatGeneration/feature/test_nolog_norm_sample.csv"
+    test_file = "../../FeatGeneration/feature/test_sample.csv"
 
     test_fg = FeatGenerator(test_file)
     test_fg.feat_config["epoch"] = 1
@@ -21,9 +21,6 @@ if __name__ == '__main__':
     tg = TensorGenerator()
     test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
 
-    # test_fg = FeatGenerator(test_file)
-    # test_features = test_fg.feature_generation()
-    # test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
     model = ModelSeqPosAtten(test_tensor_dict, train_config={"is_training": False, "dropout_rate": 0})
     model.build()
 

@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import urllib.request
 from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentTypeError
-from CoinStatistics.enums import *
+from enums import *
 
 
 def download_monthly_klines(trading_type, symbols, num_symbols, intervals, years, months, start_date, end_date, folder,

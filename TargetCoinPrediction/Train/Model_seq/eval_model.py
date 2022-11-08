@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
 
-    test_file = "../../FeatGeneration/feature/test_nolog_norm_sample.csv"
+    test_file = "../../FeatGeneration/feature/test_sample.csv"
 
     test_fg = FeatGenerator(test_file)
     test_fg.feat_config["epoch"] = 1

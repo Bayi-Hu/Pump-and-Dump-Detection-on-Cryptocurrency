@@ -9,9 +9,7 @@ import os
 
 if __name__ == '__main__':
 
-    train_file = "../../FeatGeneration/feature/train_nolog_norm_sample.csv"; sample_num = 132314
-
-    # train_file = "../../FeatGeneration/balanced_train_sample.csv"; epoch1_iter = 357
+    train_file = "../../FeatGeneration/feature/train_sample.csv"; sample_num = 132314
 
     train_fg = FeatGenerator(train_file)
     train_fg.feat_config["epoch"] = 30
@@ -19,9 +17,6 @@ if __name__ == '__main__':
     tg = TensorGenerator()
     train_tensor_dict = tg.embedding_layer(train_features, train_fg.feat_config)
 
-    # test_fg = FeatGenerator(test_file)
-    # test_features = test_fg.feature_generation()
-    # test_tensor_dict = tg.embedding_layer(test_features, test_fg.feat_config)
     model = ModelSeqPos(train_tensor_dict, train_config={"is_training": True, "dropout_rate": 0})
     model.build()
 

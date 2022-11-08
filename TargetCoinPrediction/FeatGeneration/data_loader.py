@@ -145,10 +145,6 @@ class TensorGenerator(object):
             coin_lookup_table = tf.constant(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
             # coin_lookup_table = tf.get_variable("coin_embedding_var", [feat_config["n_coin"], feat_config["d_coin"]])
 
-            # add to summary
-            # tf.summary.histogram('channel_lookup_table', channel_lookup_table)
-            # tf.summary.histogram('coin_lookup_table', coin_lookup_table)
-
             channel_embedding = tf.nn.embedding_lookup(channel_lookup_table, features["channel_id"])
             coin_embedding = tf.nn.embedding_lookup(coin_lookup_table, features["coin_id"])
 
@@ -175,17 +171,4 @@ class TensorGenerator(object):
 
         return tensor_dict
 
-if __name__ == '__main__':
-
-    fg = FeatGenerator("feature/test_sample.csv")
-    features = fg.feature_generation()
-
-    tg = TensorGenerator()
-    tensor_dict = tg.embedding_layer(features, fg.feat_config)
-
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    sess.run(tensor_dict["opt_seq_embedding"])
-    sess.run(tensor_dict["label"])
-    sess.run(tensor_dict["target_features"])
 

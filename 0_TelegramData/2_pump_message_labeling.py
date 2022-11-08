@@ -28,9 +28,7 @@ for root, dirs, files in os.walk("./PreSelection"):
         min_datetime = datetime(2021, 1, 1).replace(tzinfo=pytz.timezone('UTC'))
         if file.endswith(".pkl"):
             all_messages = load_obj(file)
-
             all_messages.reverse()
-
             for i in range(len(all_messages)):
                 m = all_messages[i]
                 if m["date"] <= min_datetime:

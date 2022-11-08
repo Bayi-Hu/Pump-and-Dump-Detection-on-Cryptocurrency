@@ -4,7 +4,7 @@ import pandas as pd
 from pycoingecko import CoinGeckoAPI
 import pickle as pkl
 from datetime import *
-from CoinStatistics.utility import download_monthly_klines
+from Statistics.utility import download_monthly_klines
 import zipfile
 import os
 import time
