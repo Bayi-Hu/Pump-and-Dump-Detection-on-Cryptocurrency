@@ -1,8 +1,7 @@
 
-# I am organizing this repo to update the code and dataset. (2022/11/07)
+# We are organizing this repo to update the code and dataset. (2022/11/07)
 
-----------------------
-# Target Coin Prediction for Cryptocurrency Pump-and-Dump
+# Target Coin Prediction for Cryptocurrency Pump-and-Dump (SIGMOD 2023)
 
 
 This is the dataset and source code used in the paper "Target Coin Prediction for Cryptocurrency Pump-and-Dump".
@@ -78,45 +77,23 @@ python 2_remap_id.py
 
 ### Training and Evaluation
 
-This implementation not only contains the SNN method, but also provides other competitors' methods, including DNN and SNNv. The training procedures of all method is as follows:
 
+
+## Citation
+
+If you find this repo useful, please consider to cite our paper:
 
 ```
-python experiments.py --model=simple-cnn \
-    --dataset=cifar10 \
-    --alg=fedprox \
-    --lr=0.01 \
-    --batch-size=64 \
-    --epochs=10 \
-    --n_parties=10 \
-    --mu=0.01 \
-    --rho=0.9 \
-    --comm_round=50 \
-    --partition=noniid-labeldir \
-    --beta=0.5\
-    --device='cuda:0'\
-    --datadir='./data/' \
-    --logdir='./logs/' \
-    --noise=0 \
-    --sample=1 \
-    --init_seed=0
+@article{hu2022sequence,
+  title={Sequence-Based Target Coin Prediction for Cryptocurrency Pump-and-Dump},
+  author={Hu, Sihao and Zhang, Zhen and Lu, Shengliang and He, Bingsheng and Li, Zhao},
+  journal={arXiv preprint arXiv:2204.12929},
+  year={2022}
+}
+
 ```
 
-| Parameter                      | Description                                 |
-| ----------------------------- | ---------------------------------------- |
-| `model` | The model architecture. Options: `simple-cnn`, `vgg`, `resnet`, `mlp`. Default = `mlp`. |
-| `max_length` | The maximum ength of the sequence, ranging from 1 to 50, default=20. |
-| `lr` | Learning rate for the local models, default = `0.01`. |
-| `batch-size` | Batch size, default = `64`. |
-| `epochs` | Number of local training epochs, default = `5`. |
-| `comm_round`    | Number of communication rounds to use, default = `50`. |
-| `partition`    | The partition way. Options: `homo`, `noniid-labeldir`, `noniid-#label1` (or 2, 3, ..., which means the fixed number of labels each party owns), `real`, `iid-diff-quantity`. Default = `homo` |
-| `beta` | The concentration parameter of the Dirichlet distribution for heterogeneous partition, default = `0.5`. |
-| `device` | Specify the device to run the program, default = `cuda:0`. |
-| `datadir` | The path of the dataset, default = `./data/`. |
-| `logdir` | The path to store the logs, default = `./logs/`. |
-| `noise` | Maximum variance of Gaussian noise we add to local party, default = `0`. |
-| `sample` | Ratio of parties that participate in each communication round, default = `1`. |
-| `init_seed` | The initial seed, default = `0`. |
+
+
 
 
