@@ -17,7 +17,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 pre_select_sample = pd.read_csv("./PreSelection/preselect_sample", sep="\t", names=["channel_id", "sample_id", "message", "message_wo_stop", "date", "weekday", "on_time", "crypto_signal", "exchange_signal", "keyword_signal", "length"])
-labeled_sample = pd.read_csv("./Labeled/label.txt", sep=" ", names=["label", "channel_id", "sample_id"])
+labeled_sample = pd.read_csv("Labeled/label.txt", sep=" ", names=["label", "channel_id", "sample_id"])
 
 labeled_sample = labeled_sample[labeled_sample.label!="?"]
 labeled_sample.loc[labeled_sample.label == "2", "label"]= "0"

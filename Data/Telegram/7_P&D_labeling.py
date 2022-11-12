@@ -124,7 +124,7 @@ def labeling(channel_id, session_id):
 if __name__ == '__main__':
 
     cnt = 0
-    for root, dirs, files in os.walk("./Labeled"):
+    for root, dirs, files in os.walk("Labeled"):
 
         for file in files:
             if file.endswith(".pkl") == False:

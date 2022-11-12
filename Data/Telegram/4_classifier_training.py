@@ -21,7 +21,7 @@ def load_obj(file):
     with open("./PreSelection/" + file, "rb") as f:
         return pickle.load(f)
 
-labeled_sample = pd.read_csv("./Labeled/label.txt", sep=" ", names=["label", "channel_id", "sample_id"])
+labeled_sample = pd.read_csv("Labeled/label.txt", sep=" ", names=["label", "channel_id", "sample_id"])
 labeled_sample = labeled_sample[labeled_sample.label!="?"]
 pre_select_sample = pd.read_csv("./PreSelection/preselect_sample", sep="\t", names=["channel_id", "sample_id", "message", "message_wo_stop", "date", "weekday", "on_time", "crypto_signal", "exchange_signal", "keyword_signal", "length"])
 pre_select_sample = pd.merge(labeled_sample, pre_select_sample, how="inner", on=["channel_id","sample_id"])

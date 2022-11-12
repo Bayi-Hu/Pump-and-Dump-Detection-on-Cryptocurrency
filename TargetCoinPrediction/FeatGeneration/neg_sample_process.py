@@ -30,7 +30,7 @@ gecko_statistics = False
 if __name__ == '__main__':
     
     # train/validation/test 要根据时间点分，否则会有leakage
-    df = pd.read_csv("../../0_TelegramData/Labeled/pump_attack_new.txt", sep="\t")
+    df = pd.read_csv("../../Data/Telegram/Labeled/pump_attack_new.txt", sep="\t")
     df["timestamp"] = df.timestamp.apply(pd.to_datetime)
     df["timestamp_unix"] = (df["timestamp"].astype(int) / (10 ** 6)).astype(int)
 
@@ -94,9 +94,9 @@ if __name__ == '__main__':
             zf.extractall(path=dest_dir)
             zf.close()
 
-        dest_dir = "../../1_Statistics/data/unzip"
+        dest_dir = "../../Data/Binance/data/unzip"
         fail_file_list = []
-        for root, dirs, files in os.walk("../../1_Statistics/data/spot"):
+        for root, dirs, files in os.walk("../../Data/Binance/data/spot"):
             for file in files:
                 if file.endswith(".zip"):
                     try:
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     if concat_flag:
 
-        dest_dir = "../../1_Statistics/data/concat"
+        dest_dir = "../../Data/Binance/data/concat"
         columns = ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_asset_volume",
                    "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume", "ignore"]
 
@@ -121,9 +121,9 @@ if __name__ == '__main__':
                 last_month_date = date - timedelta(days=15)
             try:
                 current_month_file_name = symbol + "-1m-" + date.strftime("%Y-%m") + ".csv"
-                current_month_statistics = pd.read_csv("../../1_Statistics/data/unzip/" + current_month_file_name, names=columns)
+                current_month_statistics = pd.read_csv("../../Binance/data/unzip/" + current_month_file_name, names=columns)
                 last_month_file_name = symbol + "-1m-" + last_month_date.strftime("%Y-%m") + ".csv"
-                last_month_statistics = pd.read_csv("../../1_Statistics/data/unzip/" + last_month_file_name, names=columns)
+                last_month_statistics = pd.read_csv("../../Binance/data/unzip/" + last_month_file_name, names=columns)
                 current_month_statistics = pd.concat([last_month_statistics, current_month_statistics], axis=0)
                 current_month_statistics.to_csv(os.path.join(dest_dir, current_month_file_name), index=False)
             except:
@@ -144,7 +144,7 @@ if __name__ == '__main__':
             symbol2id[s.lower()] = symbol2coinId[s]
 
         file_name_list = []
-        for root, dirs, files in os.walk("../../1_Statistics/data/concat"):
+        for root, dirs, files in os.walk("../../Data/Binance/data/concat"):
             for file in files:
                 if file.endswith(".csv"):
                     file_name_list.append(file)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     # generate neg_sample by combining binance price history and coingecko statistics
 
     file_name_list = []
-    for root, dirs, files in os.walk("../../1_Statistics/data/concat"):
+    for root, dirs, files in os.walk("../../Data/Binance/data/concat"):
         for file in files:
             if file.endswith(".csv"):
                 file_name_list.append(file)
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     for i in range(len(neg_sample_df)):
         try:
             file_name = neg_sample_df.loc[i, "coin"] + neg_sample_df.loc[i, "pair"] + "-1m-" + neg_sample_df.loc[i, "timestamp"].strftime("%Y-%m") + ".csv"
-            statistics = pd.read_csv("../../1_Statistics/data/concat/" + file_name)
+            statistics = pd.read_csv("../../Binance/data/concat/" + file_name)
         except:
             continue
 
