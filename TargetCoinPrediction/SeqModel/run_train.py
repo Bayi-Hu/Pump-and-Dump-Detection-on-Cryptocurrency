@@ -289,7 +289,8 @@ def model_fn(tensor_dict):
     model_config = {"is_training": FLAGS.do_train,
                     "dropout_rate": FLAGS.dropout_rate if FLAGS.do_train else 0.0,
                     "max_seq_length": FLAGS.max_seq_length,
-                    "learning_rate": FLAGS.learning_rate}
+                    "learning_rate": FLAGS.learning_rate,
+                    "batch_size": FLAGS.batch_size}
 
     if FLAGS.model == "snn":
         model = SNN(tensor_dict, model_config)

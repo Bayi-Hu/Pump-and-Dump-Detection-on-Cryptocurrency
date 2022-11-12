@@ -60,67 +60,76 @@ class SNN(DNN):
         super(SNN, self).__init__(tensor_dict, model_config)
 
         self.length = tensor_dict["length"]
-        self.opt_seq_embedding = tensor_dict["opt_seq_embedding"][:,:,-9:]
-        self.opt_seq_coin_embedding = tensor_dict["opt_seq_coin_embedding"]
+        self.seq_embedding = tensor_dict["seq_embedding"][:,:,-9:]
+        self.seq_coin_embedding = tensor_dict["seq_coin_embedding"]
     def positional_attention_layer(self):
 
-        feat_num = self.opt_seq_embedding.shape[2]
+        feat_num = self.seq_embedding.shape[2]
         self.length = tf.where(tf.less_equal(self.length, self.model_config["max_seq_length"]),
-                               self.length, tf.Variable([self.model_config["max_seq_length"] for i in range(256)]))
+                               self.length, tf.Variable([self.model_config["max_seq_length"] for i in range(self.model_config["batch_size"])]))
 
         self.sequence_mask = tf.sequence_mask(self.length, maxlen=50, name="sequence_mask")
 
-        dim = self.opt_seq_embedding.get_shape()[-1]
-        mask_2d = tf.tile(tf.expand_dims(self.sequence_mask, axis=2), multiples=[1, 1, dim])
-
-        self.masked_opt_seq_embedding = self.opt_seq_embedding * tf.cast(mask_2d, tf.float32) # convert bool to float
+        mask_2d = tf.expand_dims(self.sequence_mask, axis=2)
+        masked_seq_embedding = self.seq_embedding * tf.cast(mask_2d, tf.float32) # convert bool to float
 
         # use f(x) to speed training
-        global_pos_atten_list = []
         pos_atten_list = []
-        opt_seq_embed_list = []
-        num_head = 16
+        seq_pos_attent_embed_list = []
+        num_head = 8
 
         for i in range(feat_num):
 
-            x = tf.expand_dims(self.masked_opt_seq_embedding[:, :, i], axis=2)
+            x = tf.expand_dims(masked_seq_embedding[:, :, i], axis=2)
             inp = layer_norm(x, name="layer_norm_" + str(i)) # add layer norm
 
             # positional attention
-
-            pos_atten = tf.get_variable("pos_atten_" + str(i), [1, 50, num_head], initializer=tf.truncated_normal_initializer(stddev=0.02))
-            pos_atten = tf.layers.dense(pos_atten, 16, activation=tf.nn.relu, name="pos_" + str(i) + "_fx1")
+            pos_atten = tf.get_variable("pos_atten_" + str(i), [1, 50, num_head],
+                                        initializer = tf.truncated_normal_initializer(stddev=0.02))
+            pos_atten = tf.layers.dense(pos_atten, 8, activation=tf.nn.relu, name="pos_" + str(i) + "_fx1")
             pos_atten = tf.layers.dense(pos_atten, num_head, activation=None, name="pos_" + str(i) + "_fx2")
 
-            global_pos_atten_list.append(tf.expand_dims(pos_atten, axis=2))
-
-            pos_atten = tf.tile(pos_atten, [256, 1, 1])
+            pos_atten = tf.tile(pos_atten, [self.model_config["batch_size"], 1, 1])
             paddings = tf.ones_like(pos_atten) * (-2 ** 32 + 1)
 
-            mask_new = tf.tile(tf.expand_dims(mask_2d[:, :, i], axis=2), [1,1, num_head])
+            mask_new = tf.tile(mask_2d, [1,1, num_head])
             pos_atten = tf.where(tf.logical_not(mask_new), paddings, pos_atten)
             pos_atten = tf.nn.softmax(pos_atten, axis=1)
 
-            # inp = tf.expand_dims(self.masked_opt_seq_embedding[:, :, i], axis=2)
-            opt_seq_embed = tf.reduce_sum(pos_atten * inp, axis=1)
-            opt_seq_embed_list.append(opt_seq_embed)
+            # inp = tf.expand_dims(self.masked_seq_embedding[:, :, i], axis=2)
+            seq_pos_attent_embed = tf.reduce_sum(pos_atten * inp, axis=1)
+            seq_pos_attent_embed_list.append(seq_pos_attent_embed)
             pos_atten_list.append(tf.expand_dims(pos_atten, axis=2))
 
-        pos_atten_global = tf.concat(global_pos_atten_list, axis=2)
-        pos_atten = tf.concat(pos_atten_list, axis=2)
-        output = tf.concat(opt_seq_embed_list, axis=1)
+        self.pos_atten = tf.concat(pos_atten_list, axis=2)
+        self.seq_pos_attent_embeding = tf.concat(seq_pos_attent_embed_list, axis=1)
 
-        # dim for coin embedding
-        # self.length1 = tf.where(tf.less_equal(self.length, 10), self.length, tf.Variable([10 for i in range(256)]))
-        # self.sequence_mask1 = tf.sequence_mask(self.length1, maxlen=50, name="sequence_mask")
+        # for coin embedding
+        coin_mask_2d = tf.expand_dims(self.sequence_mask, axis=2)
+        masked_seq_coin_embedding = self.seq_coin_embedding * tf.cast(coin_mask_2d, tf.float32)  # convert bool to float
+        coin_inp = layer_norm(masked_seq_coin_embedding, name="layer_norm_coin_embedding")  # add layer norm
 
-        # dim = self.opt_seq_coin_embedding.get_shape()[-1]
-        # mask_2d = tf.tile(tf.expand_dims(self.sequence_mask1, axis=2), multiples=[1, 1, dim])
-        #
-        # self.masked_opt_seq_coin_embedding = self.opt_seq_coin_embedding * tf.cast(mask_2d, tf.float32)  # convert bool to float
-        # self.opt_seq_coin_embedding_sum = tf.reduce_sum(self.masked_opt_seq_coin_embedding, axis=1)
+        num_head = 8
+        pos_atten_coin = tf.get_variable("pos_atten_coin", [1, 50, num_head],
+                                          initializer=tf.truncated_normal_initializer(stddev=0.02))
+
+        pos_atten_coin = tf.layers.dense(pos_atten_coin, num_head, activation=tf.nn.relu, name="pos_coin_fx1")
+        pos_atten_coin = tf.layers.dense(pos_atten_coin, num_head, activation=None, name="pos_coin_fx2")
+
+        pos_atten_coin = tf.tile(pos_atten_coin, [self.model_config["batch_size"], 1, 1])
+        paddings = tf.ones_like(pos_atten_coin) * (-2 ** 32 + 1)
+
+        coin_mask_new = tf.tile(coin_mask_2d, [1, 1, num_head])
+        pos_atten_coin = tf.where(tf.logical_not(coin_mask_new), paddings, pos_atten_coin)
+        pos_atten_coin = tf.nn.softmax(pos_atten_coin, axis=1)
+
+        seq_coin_pos_attent_embeding = tf.reduce_sum(tf.expand_dims(pos_atten_coin, axis=2) * tf.expand_dims(coin_inp, axis=3), axis=1)
+        self.seq_coin_pos_attent_embeding = tf.reshape(seq_coin_pos_attent_embeding, [self.model_config["batch_size"], -1])
+        output = tf.concat([self.seq_pos_attent_embeding, self.seq_coin_pos_attent_embeding], axis=1)
+
+        # self.seq_coin_embedding_sum = tf.reduce_sum(masked_seq_coin_embedding, axis=1)
         # new_length = tf.where(tf.less(self.length, 1), self.length + 1, self.length)
-        # self.opt_seq_coin_embedding_mean = self.opt_seq_coin_embedding_sum / tf.cast(tf.expand_dims(new_length, axis=1), tf.float32)
+        # self.seq_coin_embedding_mean = self.seq_coin_embedding_sum / tf.cast(tf.expand_dims(new_length, axis=1), tf.float32)
 
         return output
 
@@ -128,8 +137,8 @@ class SNN(DNN):
         """
         override the build function
         """
-        self.opt_seq_embedding_mean = self.positional_attention_layer()
-        self.inp = tf.concat([self.target_features, self.opt_seq_embedding_mean], axis=1)
+        self.seq_embedding_mean = self.positional_attention_layer()
+        self.inp = tf.concat([self.target_features, self.seq_embedding_mean], axis=1)
         self.build_fcn_net(self.inp)
         self.loss_op()
 
@@ -139,19 +148,19 @@ class SNNTA(DNN):
         super(SNNTA, self).__init__(tensor_dict, model_config)
 
         self.length = tensor_dict["length"]
-        self.opt_seq_embedding = tensor_dict["opt_seq_embedding"][:,:,-9:]
-        self.opt_seq_coin_embedding = tensor_dict["opt_seq_coin_embedding"]
+        self.seq_embedding = tensor_dict["seq_embedding"][:,:,-9:]
+        self.seq_coin_embedding = tensor_dict["seq_coin_embedding"]
 
         self.atten_strategy = "mlp"
         # self.atten_strategy = "dot"
     def positional_attention_layer(self):
 
         self.length = tf.where(tf.less_equal(self.length, self.model_config["max_seq_length"]), self.length,
-                               tf.Variable([self.model_config["max_seq_length"] for i in range(256)]))
+                               tf.Variable([self.model_config["max_seq_length"] for i in range(self.model_config["batch_size"])]))
         self.sequence_mask = tf.sequence_mask(self.length, maxlen=50, name="sequence_mask")
 
         query = self.target_features[:,-9:]
-        key = self.opt_seq_embedding
+        key = self.seq_embedding
 
         if self.atten_strategy == "mlp":
             query = tf.expand_dims(query, axis=1)
@@ -191,8 +200,8 @@ class SNNTA(DNN):
         """
         override the build function
         """
-        self.opt_seq_embedding_mean = self.positional_attention_layer()
-        self.inp = tf.concat([self.target_features, self.opt_seq_embedding_mean], axis=1)
+        self.seq_embedding_mean = self.positional_attention_layer()
+        self.inp = tf.concat([self.target_features, self.seq_embedding_mean], axis=1)
         self.build_fcn_net(self.inp)
         self.loss_op()
 
