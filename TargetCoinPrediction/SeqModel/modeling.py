@@ -25,11 +25,7 @@ class DNN(object):
         """
         build the architecture for the base DNN model.
         """
-        # inp = tf.concat([self.channel_embedding, self.coin_embedding, self.target_features], axis=1)
-        # inp = tf.concat([self.channel_embedding, self.coin_embedding], axis=1)
-        # self.inp = tf.concat([self.channel_embedding, self.target_features], axis=1)
         self.inp = self.target_features
-        # self.inp = self.coin_embedding
         self.build_fcn_net(self.inp)
         self.loss_op()
 
@@ -38,9 +34,7 @@ class DNN(object):
 
             dnn1 = tf.layers.dense(inp, self.model_config["hidden1"], activation=tf.nn.relu, name='f1')
             dnn2 = tf.layers.dense(dnn1, self.model_config["hidden2"], activation=tf.nn.relu, name='f2')
-            # dnn3 = tf.layers.dense(dnn1+dnn2, self.model_config["hidden3"], activation=tf.nn.relu, name='f3')
-
-            # self.logit = tf.squeeze(tf.layers.dense(dnn2+dnn3, 1, activation=None, name='logit'))
+            
             self.logit = tf.squeeze(tf.layers.dense(dnn2, 1, activation=None, name='logit'))
 
         self.y_hat = tf.sigmoid(self.logit)
@@ -127,10 +121,6 @@ class SNN(DNN):
         seq_coin_pos_attent_embeding = tf.reduce_sum(tf.expand_dims(pos_atten_coin, axis=2) * tf.expand_dims(coin_inp, axis=3), axis=1)
         self.seq_coin_pos_attent_embeding = tf.reshape(seq_coin_pos_attent_embeding, [self.model_config["batch_size"], -1])
         output = tf.concat([self.seq_pos_attent_embeding, self.seq_coin_pos_attent_embeding], axis=1)
-
-        # self.seq_coin_embedding_sum = tf.reduce_sum(masked_seq_coin_embedding, axis=1)
-        # new_length = tf.where(tf.less(self.length, 1), self.length + 1, self.length)
-        # self.seq_coin_embedding_mean = self.seq_coin_embedding_sum / tf.cast(tf.expand_dims(new_length, axis=1), tf.float32)
 
         return output
 
