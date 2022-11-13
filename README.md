@@ -150,9 +150,9 @@ python run_train.py  --model=snn \
                      --init_seed=1234 
 ```
 
-### Result on current dataset
+### Results on current dataset
 
-We periodically update results according to updated dataset.
+We periodically update this table according to updated dataset.
 
 | Metric  | DNN   | SNN   | SNN_s |
 |---------|-------|-------|-------|
