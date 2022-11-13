@@ -63,7 +63,7 @@ python train_classifier.py
 python predict_classifier.py
 ```
 
-#### Step7: Aggregate the session based on time gap 
+#### Step7: Aggregate the session based on timestamp 
 ``` 
 python sess_aggregate.py
 ```
