@@ -18,15 +18,13 @@ Data collection corresponds to the "0_TelegramData" fold, and target coin predic
 ### Pump-and-dump Activity Logs (Jan. 1, 2019 to Jan. 15, 2021) 
 
 The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/0_TelegramData/Labeled/pump_attack_new.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
-We will continuously update this dataset
+We will continuously update this dataset.
 
 <!-- ### SeqModel
 
 <div align=center><img width="400" height="300" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/SNN.png"/></div> -->
 
-# 0. Data Collection
-
-Here we talk about how to collect Pump-and-Dump logs from Telegram.
+##  0. Data Collection
 
 First, we get seed channels verified by PumpOlymp and explore the pump channels.
 
@@ -80,9 +78,9 @@ python PDlog_clean.py
 ```
 
 
-# 1. Target Coin Prediction
+## 1. Target Coin Prediction
 
-## 1.1 Feature Generation:
+### 1.1 Feature Generation:
 
 Two methods to generate features for Target Coin Prediction.
 
@@ -104,18 +102,17 @@ tar -xzvf train.tar.gz
 tar -xzvf test.tar.gz
 ``` 
 
-## 1.2 Model Training
+### 1.2 Model Training
 
 #### Step1: Train SNN model
 ``` 
 cd TargetCoinPrediction/SeqModel
-python run_train.py  --max_seq_length=50 \
+python run_train.py  --model=snn \
+                     --max_seq_length=50 \
                      --epoch=5 \
                      --batch_size=256 \
                      --learning_rate=1e-4 \
-                     --num_train_steps=1000000 \
-                     --num_warmup_steps=100 \
-                     --save_checkpoints_steps=8000 \
+                     --dropout_rate=0.2
                      --do_train=True
                      --do_eval=False \
                      --checkpointDir=xxx \
@@ -123,19 +120,18 @@ python run_train.py  --max_seq_length=50 \
 ```
 
 
-| Parameter                | Description                                                                 |
-|--------------------------|-----------------------------------------------------------------------------|
-| `max_seq_length`         | The maximum length of P&D history.                                          |
-| `epochs`                 | Number of training epochs, default = `30`.                                  |
-| `batch_size`             | Batch size, default = `256`.                                                |
-| `learning_rate`          | Learning rate for the optimizer (Adam), default = `5e-4`.                   |
-| `num_train_steps`        | The maximum number of training steps, default = `1000000`,                  |
-| `num_warmup_steps`       | The step number for warm-up training, default = `100`.                      |
-| `save_checkpoints_steps` | The parameter controlling the step of saving checkpoints, default = `8000`. |
-| `do_train`               | Whether to do training or testing, default = `True`.                        |
-| `do_eval`                | Whether to do training or testing, default = `False`.                       |
-| `checkpointDir`          | Specify the directory to save the checkpoints.                              |
-| `init_seed`              | The initial seed, default = `1234`.                                         |
+| Parameter        | Description                                               |
+|------------------|-----------------------------------------------------------|
+| `model`          | Model used, options (`snn`, `snnta`, `dnn`)               |
+| `max_seq_length` | The maximum length of P&D history.                        |
+| `epochs`         | Number of training epochs, default = `30`.                |
+| `batch_size`     | Batch size, default = `256`.                              |
+| `learning_rate`  | Learning rate for the optimizer (Adam), default = `5e-4`. |
+| `dropout_rate`   | Dropout Ratio for training, default = `0.2`.              |
+| `do_train`       | Whether to do training or testing, default = `True`.      |
+| `do_eval`        | Whether to do training or testing, default = `False`.     |
+| `checkpointDir`  | Specify the directory to save the checkpoints.            |
+| `init_seed`      | The initial seed, default = `1234`.                       |
 
 
 
