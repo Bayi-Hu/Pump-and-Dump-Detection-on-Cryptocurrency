@@ -13,16 +13,19 @@ The workflow mainly consists of two parts: data collection and target coin predi
 
 <div align=center><img width="680" height="270" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/workflow.png"/></div>
 
-Data collection corresponds to the "0_TelegramData" fold, and target coin prediction corresponds to the "1_Statistics" and "TargetCoinPrediction" folds.
 
 ### Pump-and-dump Activity Logs (Jan. 1, 2019 to Jan. 15, 2021) 
 
 The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/0_TelegramData/Labeled/pump_attack_new.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
-We will continuously update this dataset.
+We will periodically update this dataset.
 
 <!-- ### SeqModel
 
 <div align=center><img width="400" height="300" src="https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/materials/SNN.png"/></div> -->
+
+# Getting Start
+
+Since we have already collected P\&D log dataset and will periodically update it, you can skip the data collection part : )
 
 ##  0. Data Collection
 

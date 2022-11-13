@@ -99,7 +99,6 @@ class FeatGenerator(object):
         features["coin_id"] = tf.string_to_number(coin_id, out_type=tf.int32)
 
         features["timestamp"] = time_stamp
-        # features["label"] = tf.one_hot(tf.string_to_number(label, out_type=tf.int32), depth=2)
         features["label"] = tf.string_to_number(label, out_type=tf.float32)
         features["target_features"] = tf.reshape(tf.string_to_number(feature_target, out_type=tf.float32), [-1, self.feat_config["n_target_feat"]])
 
@@ -118,9 +117,10 @@ class FeatGenerator(object):
             with open("../FeatGeneration/feature/wv_embedding.pkl", "rb") as f:
                 wv_embedding = pkl.load(f)
 
-            # coin_lookup_table = tf.constant(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
-            coin_lookup_table = tf.Variable(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
+            coin_lookup_table = tf.constant(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
+            # coin_lookup_table = tf.Variable(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
 
+            # if don't use word embedding to address the cold-start problem 
             # coin_lookup_table = tf.get_variable("coin_embedding_var", [self.feat_config["n_coin"], self.feat_config["d_coin"]])
             coin_embedding = tf.nn.embedding_lookup(coin_lookup_table, features["coin_id"])
             seq_coin_embedding = tf.nn.embedding_lookup(coin_lookup_table, features["seq_coin_id"])
@@ -133,11 +133,8 @@ class FeatGenerator(object):
             tensor_dict["channel_embedding"] = channel_embedding
             tensor_dict["coin_embedding"] = coin_embedding
             tensor_dict["target_features"] = features["target_features"]
-            # tensor_dict["seq_coin_embedding"] = seq_coin_embedding
             tensor_dict["seq_embedding"] = features["seq_feature"]
             tensor_dict["seq_coin_embedding"] = seq_coin_embedding
-            # tensor_dict["seq_embedding"] = seq_coin_embedding
-            # tensor_dict["seq_embedding"] = tf.concat([seq_coin_embedding, features["seq_feature"]], 2)
 
         return tensor_dict
 
