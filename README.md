@@ -138,7 +138,7 @@ python run_train.py  --model=snn \
 
 #### Step2: Evaluate SNN model
 ```
-python run_train.py  --model=snn \
+python run_eval.py   --model=snn \
                      --max_seq_length=8 \
                      --epoch=1 \
                      --batch_size=256 \
