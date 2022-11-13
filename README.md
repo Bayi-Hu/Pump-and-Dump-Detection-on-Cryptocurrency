@@ -37,13 +37,11 @@ First, we get seed channels verified by PumpOlymp and explore the pump channels.
 #### Step1: get historical messages according to channel
 ``` 
 python get_channel_post.py
-``` 
-
+```
 #### Step2: Select pump message with keyword filtering
 ``` 
 python keyword_filte.py
 ```
-
 #### Step3: Manually label the filtered messages
 ``` 
 python pump_message_label.py
@@ -57,12 +55,12 @@ python message_fg.py
 
 #### Step5: Train a detection classifier.
 ``` 
-python predict_classifier.py
+python train_classifier.py
 ```
 
 #### Step6: Use the classifier for detection 
 ``` 
-python train_classifier.py
+python predict_classifier.py
 ```
 
 #### Step7: Aggregate the session based on time gap 
