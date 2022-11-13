@@ -120,7 +120,7 @@ class FeatGenerator(object):
             coin_lookup_table = tf.constant(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
             # coin_lookup_table = tf.Variable(wv_embedding, name="coin_embedding_var", dtype=tf.float32)
 
-            # if don't use word embedding to address the cold-start problem 
+            # if don't use word embedding to address the cold-start problem
             # coin_lookup_table = tf.get_variable("coin_embedding_var", [self.feat_config["n_coin"], self.feat_config["d_coin"]])
             coin_embedding = tf.nn.embedding_lookup(coin_lookup_table, features["coin_id"])
             seq_coin_embedding = tf.nn.embedding_lookup(coin_lookup_table, features["seq_coin_id"])

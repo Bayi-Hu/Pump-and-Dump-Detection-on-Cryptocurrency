@@ -111,7 +111,7 @@ tar -xzvf test.tar.gz
 ``` 
 cd TargetCoinPrediction/SeqModel
 python run_train.py  --model=snn \
-                     --max_seq_length=50 \
+                     --max_seq_length=8 \
                      --epoch=5 \
                      --batch_size=256 \
                      --learning_rate=1e-4 \
@@ -126,7 +126,7 @@ python run_train.py  --model=snn \
 | Parameter        | Description                                               |
 |------------------|-----------------------------------------------------------|
 | `model`          | Model used, options (`snn`, `snnta`, `dnn`)               |
-| `max_seq_length` | The maximum length of P&D history.                        |
+| `max_seq_length` | The maximum length of P&D history 1~ 50, default=8        |
 | `epochs`         | Number of training epochs, default = `30`.                |
 | `batch_size`     | Batch size, default = `256`.                              |
 | `learning_rate`  | Learning rate for the optimizer (Adam), default = `5e-4`. |
