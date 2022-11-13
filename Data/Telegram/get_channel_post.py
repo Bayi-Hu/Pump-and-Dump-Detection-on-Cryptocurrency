@@ -23,7 +23,7 @@ def save_obj(obj, name):
 
 async def main():
 
-    with open("raw/PUMPOLYMP_public_channel2", "r") as f:
+    with open("raw/Pump_channel2", "r") as f:
         Channels = f.readlines()
 
     failed_channel = []

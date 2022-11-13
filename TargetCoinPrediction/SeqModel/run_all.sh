@@ -33,8 +33,9 @@ CUDA_VISIBLE_DEVICES=2 python run_train.py --model=snn --max_seq_length=3 --chec
 CUDA_VISIBLE_DEVICES=2 python run_eval.py --model=snn --max_seq_length=3 --checkpointDir=snn_3
 
 
+CUDA_VISIBLE_DEVICES=0 python run_train.py --model=snn --max_seq_length=8 --checkpointDir=snn_8_wv
+CUDA_VISIBLE_DEVICES=1 python run_train.py --model=snn --max_seq_length=8 --checkpointDir=snn_8_wv_1
+CUDA_VISIBLE_DEVICES=2 python run_train.py --model=snn --max_seq_length=8 --checkpointDir=snn_8_wv_2
 
-
-CUDA_VISIBLE_DEVICES=4 python run_train.py --model=snn --max_seq_length=8 --checkpointDir=snn_8
-CUDA_VISIBLE_DEVICES=4 python run_eval.py --model=snn --max_seq_length=8 --checkpointDir=snn_8
+CUDA_VISIBLE_DEVICES=7 python run_train.py --model=dnn --checkpointDir=dnn
 

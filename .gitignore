@@ -12,9 +12,7 @@
 /TargetCoinPrediction/FeatGeneration/feature/*
 /TargetCoinPrediction/FeatGeneration/__pycache__
 /TargetCoinPrediction/SeqModel/__pycache__
-/TargetCoinPrediction/Train/.DS_Store
-/TargetCoinPrediction/Train/Model_seq_pos/.DS_Store
-/TargetCoinPrediction/Train/Model_seq/.DS_Store
+/TargetCoinPrediction/SeqModel/.DS_Store
 /Data/Telegram/anon.session
 /.idea/*
 /PriceForecasting/*
