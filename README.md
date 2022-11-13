@@ -34,46 +34,40 @@ First, we get seed channels verified by PumpOlymp and explore the pump channels.
 - /Data/Telegram/Pump_channel1
 - /Data/Telegram/Pump_channel2
 
-#### Step1: get historical messages according to channel
+**Step1: get historical messages according to channel**
 ``` 
 python get_channel_post.py
 ```
-#### Step2: Select pump message with keyword filtering
+**Step2: Select pump message with keyword filtering**
 ``` 
 python keyword_filte.py
 ```
-#### Step3: Manually label the filtered messages
+**Step3: Manually label the filtered messages**
 ``` 
 python pump_message_label.py
 # we have already labeled 5000+ samples. 
 ```
-
-#### Step4: Generate features for messages.
+**Step4: Generate features for messages.**
 ``` 
 python message_fg.py
 ```
-
-#### Step5: Train a detection classifier.
+**Step5: Train a detection classifier.**
 ``` 
 python train_classifier.py
 ```
-
-#### Step6: Use the classifier for detection 
+**Step6: Use the classifier for detection** 
 ``` 
 python predict_classifier.py
 ```
-
-#### Step7: Aggregate the session based on timestamp 
+**Step7: Aggregate the session based on timestamp**
 ``` 
 python sess_aggregate.py
 ```
-
-#### Step8: Label the predicted pump session and generate final P&D log
+**Step8: Label the predicted pump session and generate final P&D log**
 ``` 
 python PD_label.py
 ```
-
-#### Step9: Clean the log dataset
+**Step9: Clean the log dataset**
 ``` 
 python PDlog_clean.py
 ```
