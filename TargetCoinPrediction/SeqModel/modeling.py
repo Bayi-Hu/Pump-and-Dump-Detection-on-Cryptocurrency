@@ -139,8 +139,7 @@ class SNN(DNN):
         override the build function
         """
         self.seq_embedding_mean = self.positional_attention_layer()
-        self.inp = tf.concat([self.target_features, self.seq_embedding_mean], axis=1)
-        # self.inp = tf.concat([self.target_features, self.seq_embedding_mean, self.coin_embedding], axis=1)
+        self.inp = tf.concat([self.target_features, self.seq_embedding_mean, self.coin_embedding], axis=1)
         self.build_fcn_net(self.inp)
         self.loss_op()
 
