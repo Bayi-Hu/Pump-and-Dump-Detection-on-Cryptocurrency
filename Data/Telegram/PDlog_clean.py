@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("Labeled/pump_attack.txt", header=None, sep="\t", names=["channel_id", "session_id", "coin", "exchange", "pair", "timestamp"])
+df = pd.read_csv("Labeled/PD_logs_raw.txt", header=None, sep="\t", names=["channel_id", "session_id", "coin", "exchange", "pair", "timestamp"])
 df["timestamp"] = df.timestamp.apply(pd.to_datetime)
 coin_time_to_exchange = {}
 coin_time_to_pair = {}
@@ -50,4 +50,4 @@ for i in range(len(df)):
     if df.loc[i, "exchange"] == "?":
         df.loc[i, "exchange"] = "binance"
 
-df.to_csv("./Labeled/pump_attack_new.txt", index=False, sep="\t")
+df.to_csv("./Labeled/PD_logs_cleaned.txt", index=False, sep="\t")

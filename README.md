@@ -16,7 +16,7 @@ The workflow mainly consists of two parts: data collection and target coin predi
 
 ### Pump-and-dump Activity Logs (Jan. 1, 2019 to Jan. 15, 2021) 
 
-The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/0_TelegramData/Labeled/pump_attack_new.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
+The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/Data/Telegram/Labeled/PD_log_cleaned.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
 We will periodically update this dataset.
 
 <!-- ### SeqModel
@@ -90,7 +90,7 @@ Two methods to generate features for Target Coin Prediction.
 #### Method1: Generate features from P&D logs: 
 
 ```
-HOLD (I am still organizing this part of code...)
+HOLD (still organizing this part of code because it involves feature collection from multiple sources,)
 ``` 
 
 #### Mehod2: Download generated dataset from Good Drive
