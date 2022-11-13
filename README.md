@@ -123,32 +123,29 @@ python run_train.py  --model=snn \
 ```
 
 
-| Parameter        | Description                                                       |
-|------------------|-------------------------------------------------------------------|
-| `model`          | Model used, options (`snn`, `snnta`, `dnn`)                       |
-| `max_seq_length` | The maximum length of P&D sequence, options `1~ 50`, default=`8`. |
-| `epochs`         | Number of training epochs, default = `30`.                        |
-| `batch_size`     | Batch size, default = `256`.                                      |
-| `learning_rate`  | Learning rate for the optimizer (Adam), default = `5e-4`.         |
-| `dropout_rate`   | Dropout Ratio for training, default = `0.2`.                      |
-| `do_train`       | Whether to do training or testing, default = `True`.              |
-| `do_eval`        | Whether to do training or testing, default = `False`.             |
-| `checkpointDir`  | Specify the directory to save the checkpoints.                    |
-| `init_seed`      | The initial seed, default = `1234`.                               |
+| Parameter        | Description                                                            |
+|------------------|------------------------------------------------------------------------|
+| `model`          | Model used for target coin prediction, options (`snn`, `snnta`, `dnn`) |
+| `max_seq_length` | The maximum length of P&D sequence, options `1~ 50`, default=`8`.      |
+| `epochs`         | Number of training epochs, default = `30`.                             |
+| `batch_size`     | Batch size, default = `256`.                                           |
+| `learning_rate`  | Learning rate for the optimizer (Adam), default = `5e-4`.              |
+| `dropout_rate`   | Dropout Ratio for training, default = `0.2`.                           |
+| `do_train`       | Whether to do training or testing, default = `True`.                   |
+| `do_eval`        | Whether to do training or testing, default = `False`.                  |
+| `checkpointDir`  | Specify the directory to save the checkpoints.                         |
+| `init_seed`      | The initial seed, default = `1234`.                                    |
 
 
 
 #### Step2: Evaluate SNN model
 ```
-python run_train.py  --max_seq_length=50 \
-                     --epoch=5 \
+python run_train.py  --model=snn \
+                     --max_seq_length=8 \
+                     --epoch=1 \
                      --batch_size=256 \
-                     --learning_rate=1e-4 \
-                     --num_train_steps=1000000 \
-                     --num_warmup_steps=100 \
-                     --save_checkpoints_steps=8000 \
-                     --do_train=True
-                     --do_eval=False \
+                     --do_train=False
+                     --do_eval=True \
                      --checkpointDir=xxx \
                      --init_seed=1234 
 ```
