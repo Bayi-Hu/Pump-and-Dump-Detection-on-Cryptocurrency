@@ -90,7 +90,7 @@ Two methods to generate features for Target Coin Prediction.
 #### Method1: Generate features from P&D logs: 
 
 ```
-HOLD
+HOLD (I am still organizing this part of code...)
 ``` 
 
 #### Mehod2: Download generated dataset from Good Drive
