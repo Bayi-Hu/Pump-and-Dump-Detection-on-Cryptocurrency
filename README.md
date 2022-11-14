@@ -16,7 +16,7 @@ The workflow mainly consists of two parts: data collection and target coin predi
 
 ### Pump-and-dump Activity Logs (Jan. 1, 2019 to Jan. 15, 2021) 
 
-The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/Data/Telegram/Labeled/PD_log_cleaned.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
+The [P&D logs](https://github.com/Bayi-Hu/Pump-and-Dump-Detection-on-Cryptocurrency/blob/master/Data/Telegram/Labeled/PD_logs_cleaned.txt) includes 1,335 samples and 709 P&Ds that we observed on Telegram. 
 We will periodically update this dataset.
 
 <!-- ### SeqModel
