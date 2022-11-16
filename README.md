@@ -104,14 +104,13 @@ tar -xzvf test.tar.gz
 cd TargetCoinPrediction/SeqModel
 python run_train.py  --model=snn \
                      --max_seq_length=8 \
-                     --epoch=5 \
+                     --epoch=30 \
                      --batch_size=256 \
                      --learning_rate=1e-4 \
                      --dropout_rate=0.2
                      --do_train=True
                      --do_eval=False \
-                     --checkpointDir=xxx \
-                     --init_seed=1234 
+                     --checkpointDir=xxx 
 ```
 
 
@@ -126,7 +125,8 @@ python run_train.py  --model=snn \
 | `do_train`       | Whether to do training or testing, default = `True`.                   |
 | `do_eval`        | Whether to do training or testing, default = `False`.                  |
 | `checkpointDir`  | Specify the directory to save the checkpoints.                         |
-| `init_seed`      | The initial seed, default = `1234`.                                    |
+
+[//]: # (| `init_seed`      | The initial seed, default = `1234`.                                    |)
 
 
 
