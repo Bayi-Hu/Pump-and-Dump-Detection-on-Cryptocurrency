@@ -175,7 +175,8 @@ def main(_):
     elif FLAGS.do_eval:
 
         auc_value_list = []
-        for epoch in range(1, 31):
+        # for epoch in range(1, 31):
+        for epoch in range(15, 31):
 
             ckpt = os.path.join(FLAGS.checkpointDir, FLAGS.model + str(epoch))
             saver = tf.train.Saver()

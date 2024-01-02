@@ -10,6 +10,7 @@
 /TargetCoinPrediction/.DS_Store
 /TargetCoinPrediction/Train/Model_seq_pos/save_log/*
 /TargetCoinPrediction/FeatGeneration/feature/*
+!/TargetCoinPrediction/FeatGeneration/feature/wv_embedding.pkl
 /TargetCoinPrediction/FeatGeneration/__pycache__
 /TargetCoinPrediction/SeqModel/__pycache__
 /TargetCoinPrediction/SeqModel/.DS_Store
